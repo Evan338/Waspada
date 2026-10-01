@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="WASPADA">
+  <defs>
+    <linearGradient id="fv-red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B91C1C"/>
+      <stop offset="1" stop-color="#881313"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0F172A"/>
+  <path d="M32 7 55 16v15.5C55 44.4 45.6 54.7 32 58.5 18.4 54.7 9 44.4 9 31.5V16L32 7Z"
+        fill="url(#fv-red)" stroke="#D4A017" stroke-width="2.5"/>
+  <path d="M32 12.2 50 19v12.5c0 9.9-7.3 18.1-18 21.4-10.7-3.3-18-11.5-18-21.4V19l18-6.8Z"
+        fill="none" stroke="#FBBF24" stroke-width="1.4" opacity=".55"/>
+  <path d="M20 25.5l3.6 12.2 4.1-8.6 4.3 8.6 3.6-12.2" fill="none" stroke="#FAF7F2"
+        stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="44.5" r="2.6" fill="#D4A017"/>
+</svg>

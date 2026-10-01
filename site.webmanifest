@@ -1,0 +1,32 @@
+{
+  "name": "WASPADA – Wira Sadar Pandai Data",
+  "short_name": "WASPADA",
+  "description": "Edukasi kebangsaan SMA: menangkal hoaks dan propaganda digital dengan meneladani nilai pejuang kemerdekaan Indonesia 1945–1949.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAF7F2",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

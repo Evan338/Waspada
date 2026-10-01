@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 400" role="img"
+     aria-label="Ilustrasi perjuangan meja diplomasi Indonesia 1945-1949">
+  <defs>
+    <pattern id="dip-batik" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#D4A017" opacity=".35"/>
+      <circle cx="10" cy="10" r="1.1" fill="#B91C1C" opacity=".22"/>
+    </pattern>
+    <linearGradient id="dip-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAF7F2"/>
+      <stop offset="1" stop-color="#F3EDE2"/>
+    </linearGradient>
+    <linearGradient id="dip-hall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="dip-spot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBBF24" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#FBBF24" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="320" height="400" rx="18" fill="url(#dip-sky)"/>
+  <rect width="320" height="400" rx="18" fill="url(#dip-batik)"/>
+
+  <!-- ceremonial flag backdrop -->
+  <g opacity=".95">
+    <rect x="18" y="34" width="12" height="150" rx="2" fill="#B91C1C"/>
+    <rect x="30" y="34" width="12" height="150" rx="2" fill="#FAF7F2"/>
+    <rect x="278" y="34" width="12" height="150" rx="2" fill="#B91C1C"/>
+    <rect x="290" y="34" width="12" height="150" rx="2" fill="#FAF7F2"/>
+    <rect x="18" y="34" width="12" height="150" rx="2" fill="none" stroke="#881313" stroke-width="1"/>
+    <rect x="278" y="34" width="12" height="150" rx="2" fill="none" stroke="#881313" stroke-width="1"/>
+  </g>
+
+  <!-- conference hall -->
+  <rect x="54" y="34" width="212" height="150" rx="10" fill="url(#dip-hall)"/>
+  <path d="M54 184V70a36 36 0 0 1 36-36h140a36 36 0 0 1 36 36v114Z" fill="url(#dip-spot)"/>
+  <!-- windows -->
+  <g fill="#334155">
+    <rect x="74" y="54" width="38" height="52" rx="4"/>
+    <rect x="141" y="54" width="38" height="52" rx="4"/>
+    <rect x="208" y="54" width="38" height="52" rx="4"/>
+  </g>
+  <g fill="#0F172A" opacity=".55">
+    <rect x="74" y="80" width="38" height="26" rx="4"/>
+    <rect x="141" y="80" width="38" height="26" rx="4"/>
+    <rect x="208" y="80" width="38" height="26" rx="4"/>
+  </g>
+  <!-- hammer / podium emblem -->
+  <circle cx="160" cy="140" r="24" fill="#0F172A" stroke="#D4A017" stroke-width="2"/>
+  <path d="M150 132h20M160 132v18M152 150h16" stroke="#D4A017" stroke-width="2.6"
+        stroke-linecap="round" fill="none"/>
+  <text x="160" y="176" font-family="Georgia, serif" font-size="11" font-weight="700"
+        fill="#FBBF24" text-anchor="middle" letter-spacing="1.6">PBB 1947</text>
+
+  <!-- long negotiation table -->
+  <path d="M28 262h264l-22 46H50Z" fill="#0F172A"/>
+  <rect x="28" y="252" width="264" height="14" rx="6" fill="#1E293B"/>
+  <rect x="28" y="252" width="264" height="4" rx="2" fill="#D4A017" opacity=".7"/>
+  <!-- documents and microphone on the table -->
+  <g>
+    <rect x="52" y="240" width="34" height="24" rx="2" fill="#FAF7F2" stroke="#CBD5E1" stroke-width="1"/>
+    <path d="M58 246h22M58 251h22M58 256h14" stroke="#94A3B8" stroke-width="1.6" stroke-linecap="round"/>
+    <rect x="234" y="240" width="34" height="24" rx="2" fill="#FAF7F2" stroke="#CBD5E1" stroke-width="1"/>
+    <path d="M240 246h22M240 251h22M240 256h14" stroke="#94A3B8" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <g>
+    <rect x="153" y="214" width="14" height="30" rx="7" fill="#334155"/>
+    <path d="M160 244v14M148 258h24" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
+    <rect x="152" y="180" width="16" height="30" rx="8" fill="#B91C1C"/>
+    <g stroke="#881313" stroke-width="1.4">
+      <path d="M154 186h12M154 191h12M154 196h12M154 201h12"/>
+    </g>
+  </g>
+
+  <!-- seated delegations -->
+  <g fill="#1E293B">
+    <!-- left delegate -->
+    <circle cx="76" cy="296" r="15"/>
+    <path d="M53 348c0-13 10-24 23-24s23 11 23 24Z"/>
+    <!-- middle delegate -->
+    <circle cx="160" cy="288" r="16"/>
+    <path d="M136 344c0-14 11-25 24-25s24 11 24 25Z"/>
+    <!-- right delegate -->
+    <circle cx="244" cy="296" r="15"/>
+    <path d="M221 348c0-13 10-24 23-24s23 11 23 24Z"/>
+  </g>
+  <g>
+    <path d="M160 300v18" stroke="#B91C1C" stroke-width="5" stroke-linecap="round"/>
+    <path d="M76 308v16M244 308v16" stroke="#B91C1C" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- foreground podium strip -->
+  <rect x="0" y="366" width="320" height="34" fill="#0F172A"/>
+  <rect x="0" y="366" width="320" height="5" fill="#D4A017"/>
+  <text x="160" y="388" font-family="Georgia, serif" font-size="12" font-weight="700"
+        fill="#FAF7F2" text-anchor="middle" letter-spacing="2.2">DIPLOMASI 1945–1949</text>
+</svg>

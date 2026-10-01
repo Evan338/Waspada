@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>WASPADA – Wira Sadar Pandai Data | Edukasi Anti-Hoaks Berbasis Pejuang 1945–1949</title>
+<meta name="description" content="WASPADA (Wira Sadar Pandai Data) — media edukasi kebangsaan SMA untuk menangkal hoaks dan propaganda digital dengan meneladani nilai pejuang kemerdekaan Indonesia 1945–1949. Enam bab interaktif, simulator cek fakta, dan kuis literasi data.">
+<meta name="author" content="Evan XI-TEI 1">
+<meta name="theme-color" content="#0F172A">
+<meta name="color-scheme" content="light">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WASPADA">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="WASPADA – Wira Sadar Pandai Data">
+<meta property="og:description" content="Merdeka dari hoaks & agresi informasi. Enam bab interaktif yang menghubungkan strategi pejuang 1945–1949 dengan literasi data pelajar masa kini.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WASPADA – Wira Sadar Pandai Data">
+<meta name="twitter:description" content="Merdeka dari hoaks & agresi informasi — edukasi kebangsaan SMA.">
+<meta name="twitter:image" content="assets/og-image.jpg">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            red: '#B91C1C',
+            redDark: '#881313',
+            navy: '#0F172A',
+            navyLight: '#1E293B',
+            cream: '#FAF7F2',
+            creamDark: '#F3EDE2',
+            gold: '#D4A017',
+            goldLight: '#FBBF24',
+            goldMuted: '#B45309'
+          }
+        },
+        fontFamily: {
+          serif: ['"Playfair Display"', 'Georgia', 'serif'],
+          sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          display: ['"Cinzel"', 'serif']
+        }
+      }
+    }
+  }
+</script>
+<style>
+  :root {
+    --brand-red: #B91C1C;
+    --brand-red-dark: #881313;
+    --brand-navy: #0F172A;
+    --brand-cream: #FAF7F2;
+    --brand-gold: #D4A017;
+    --slide-duration: 500ms;
+    --header-h: 84px;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #FAF7F2;
+    color: #0F172A;
+    overflow-x: hidden;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Batik Parang / Kawung stylised geometric pattern */
+  .bg-batik-subtle {
+    background-color: #FAF7F2;
+    background-image: radial-gradient(#D4A017 0.75px, transparent 0.75px),
+                      radial-gradient(#B91C1C 0.75px, #FAF7F2 0.75px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+  }
+
+  .batik-border {
+    background-image: repeating-linear-gradient(45deg, #B91C1C 0, #B91C1C 12px, #D4A017 12px, #D4A017 24px, #0F172A 24px, #0F172A 36px);
+    flex-shrink: 0;
+  }
+
+  /* ---------------------------------------------------------------
+     HORIZONTAL DECK
+     Wrapper is 6 slides wide; each slide is exactly 1/6 of it, so a
+     single translateX step equals one slide regardless of viewport.
+     Using percentages (not vw) avoids scrollbar-width overflow.
+     --------------------------------------------------------------- */
+  .slides-wrapper {
+    display: flex;
+    width: 600%;
+    transition: transform var(--slide-duration) cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    touch-action: pan-y;
+  }
+
+  .slides-wrapper.is-dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+
+  .slide-page {
+    width: calc(100% / 6);
+    flex: 0 0 calc(100% / 6);
+    box-sizing: border-box;
+    height: calc(100vh - var(--header-h));
+    height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  body.is-dragging { cursor: grabbing; user-select: none; }
+  body.is-dragging * { user-select: none !important; }
+  body.is-dragging img { pointer-events: none; }
+
+  /* ---------------------------------------------------------------
+     STAGGERED FADE-UP (delay is assigned per element by JS)
+     --------------------------------------------------------------- */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--fade-delay, 0ms);
+  }
+
+  .slide-page.is-active .fade-up {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Cards & buttons */
+  .card-lift {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px -8px rgba(185, 28, 28, 0.15), 0 8px 16px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  .gold-glow { box-shadow: 0 0 24px rgba(212, 160, 23, 0.25); }
+
+  /* Image / illustration treatment */
+  .illus-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #F3EDE2;
+  }
+  .illus-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .illus-frame-gold { box-shadow: inset 0 0 0 1px rgba(212, 160, 23, 0.55); }
+
+  /* Custom scrollbar for slides */
+  .slide-page::-webkit-scrollbar { width: 8px; }
+  .slide-page::-webkit-scrollbar-track { background: transparent; }
+  .slide-page::-webkit-scrollbar-thumb {
+    background: rgba(185, 28, 28, 0.25);
+    border-radius: 999px;
+  }
+  .slide-page::-webkit-scrollbar-thumb:hover { background: rgba(185, 28, 28, 0.45); }
+
+  /* Quiz feedback */
+  .option-btn { transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+  .option-btn:not(:disabled):hover { transform: translateX(3px); }
+  .option-btn.correct {
+    background-color: #10B981 !important;
+    color: #ffffff !important;
+    border-color: #059669 !important;
+  }
+  .option-btn.wrong {
+    background-color: #EF4444 !important;
+    color: #ffffff !important;
+    border-color: #DC2626 !important;
+  }
+  .option-btn:disabled { cursor: not-allowed; opacity: 0.65; }
+  .option-btn.correct:disabled, .option-btn.wrong:disabled { opacity: 1; }
+
+  /* Persistent watermark */
+  .watermark {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  @media (max-width: 640px) {
+    :root { --header-h: 96px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slides-wrapper { transition: none; }
+    .fade-up { transition: none; opacity: 1; transform: none; }
+    .card-lift:hover { transform: none; }
+  }
+</style>
+</head>
+<body class="relative text-brand-navy antialiased selection:bg-brand-red selection:text-white">
+<!-- ============================ TOP STICKY NAVBAR ============================ -->
+<header class="sticky top-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-stone-200/80 shadow-sm">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-[72px] flex items-center justify-between gap-3 sm:gap-4">
+
+    <!-- Brand -->
+    <div class="flex items-center space-x-2.5 sm:space-x-3 cursor-pointer group shrink-0" onclick="goToSlide(0)" role="button" tabindex="0" aria-label="Ke Bab 1">
+      <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-brand-red to-brand-redDark text-white flex items-center justify-center shadow-md shadow-brand-red/20 border border-brand-gold/40 group-hover:scale-105 transition-transform">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-200" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm0 2.18l6 2.25v4.66c0 4.07-2.67 7.84-6 8.87-3.33-1.03-6-4.8-6-8.87V6.43l6-2.25zM11 7v6h2V7h-2zm0 8v2h2v-2h-2z"></path>
+        </svg>
+      </div>
+      <div class="leading-none">
+        <div class="flex items-center gap-1.5">
+          <span class="font-serif font-black text-lg sm:text-xl tracking-wider text-brand-red">WASPADA</span>
+          <span class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-brand-goldMuted border border-brand-gold/30">1945–1949</span>
+        </div>
+        <p class="text-[10px] tracking-tight text-slate-500 font-medium hidden sm:block mt-0.5">Wira Sadar Pandai Data • Edukasi Kebangsaan SMA</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+      <div class="flex flex-col items-start relative shrink-0">
+        <label for="chapterSelector" class="hidden sm:block text-[9px] font-black tracking-[0.14em] text-slate-400 uppercase mb-0.5 pl-1">Pilih Bab</label>
+        <select id="chapterSelector"
+                aria-label="Pilih Bab Pembelajaran"
+                onchange="goToSlide(parseInt(this.value, 10))"
+                class="bg-white/90 border border-stone-300 hover:border-brand-red text-brand-navy font-semibold text-[11px] sm:text-sm rounded-xl px-2 sm:px-3 py-2 pr-7 sm:pr-9 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-red cursor-pointer max-w-[168px] sm:max-w-none">
+          <option value="0">Bab 1: Perang Informasi Digital</option>
+          <option value="1">Bab 2: Diplomasi vs Fisik (1945–1949)</option>
+          <option value="2">Bab 3: Garis Van Mook & Gerilya</option>
+          <option value="3">Bab 4: Konsep & Simulator WASPADA</option>
+          <option value="4">Bab 5: Nilai Filosofis Pejuang</option>
+          <option value="5">Bab 6: Kuis Interaktif & Konklusi</option>
+        </select>
+      </div>
+
+      <!-- Quick jump (large screens) -->
+      <nav class="hidden xl:flex items-center gap-1 border-l border-stone-200 pl-3" aria-label="Lompat cepat antar bab">
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(0)">1. Intro</button>
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(1)">2. Sejarah</button>
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(2)">3. Van Mook</button>
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(3)">4. Simulator</button>
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(4)">5. Nilai</button>
+        <button class="nav-chip px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-brand-red hover:bg-stone-100 transition" onclick="goToSlide(5)">6. Kuis</button>
+      </nav>
+
+      <button class="hidden sm:flex bg-brand-red hover:bg-brand-redDark text-white text-xs sm:text-sm font-bold px-3.5 sm:px-4 py-2 rounded-xl shadow-md shadow-brand-red/20 items-center gap-1.5 transition shrink-0"
+              onclick="goToSlide(1)">
+        <span>Jelajahi</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="w-full bg-stone-200 h-1.5 relative overflow-hidden">
+    <div id="progressBar" class="bg-gradient-to-r from-brand-red via-brand-gold to-brand-red h-full transition-all duration-500 ease-out" style="width: 16.6667%;"></div>
+  </div>
+  <div class="batik-border opacity-70 h-1"></div>
+</header>
+
+<!-- ============================ MAIN DECK ============================ -->
+<main class="relative w-full overflow-hidden">
+  <div class="slides-wrapper" id="slidesWrapper" style="transform: translateX(0%);">
+<!-- ===================================================================== -->
+    <!-- BAB 1 — PENDAHULUAN: PERANG INFORMASI DIGITAL                        -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-8 lg:p-12" id="slide-0" data-chapter="0" aria-label="Bab 1 Pendahuluan">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center py-6 pb-32 sm:pb-24">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+
+          <!-- Left: copy -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="fade-up inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-100/80 border border-brand-red/30 text-brand-red text-xs font-bold tracking-wide">
+              <span class="w-2 h-2 rounded-full bg-brand-red animate-ping"></span>
+              BAB 1: TANTANGAN GENERASI MUDA
+            </div>
+
+            <h1 class="fade-up font-serif text-3xl sm:text-5xl lg:text-6xl font-black text-brand-navy leading-[1.15]">
+              Merdeka dari <span class="text-brand-red underline decoration-brand-gold decoration-4 underline-offset-4">Hoaks</span> & Agresi Informasi
+            </h1>
+
+            <p class="fade-up text-base sm:text-lg text-slate-700 leading-relaxed max-w-2xl">
+              Tahun 1945–1949, pejuang Republik bertaruh nyawa menghadapi blokade dan propaganda NICA/Belanda.
+              Hari ini di era media sosial, medan pertempuran berpindah ke gawai kita: banjir <strong>hoaks, manipulasi data, dan polarisasi</strong>.
+              WASPADA membekali pelajar SMA dengan jiwa ksatria dan kecakapan digital pejuang kemerdekaan.
+            </p>
+
+            <!-- Stats -->
+            <div class="fade-up grid grid-cols-3 gap-3 sm:gap-4 pt-1">
+              <div class="bg-white p-3 sm:p-4 rounded-2xl border border-stone-200/90 shadow-sm card-lift">
+                <div class="text-brand-red font-serif font-black text-lg sm:text-2xl">1945–1949</div>
+                <div class="text-[11px] sm:text-xs text-slate-500 font-semibold">Semangat Juang Fisik & Diplomasi</div>
+              </div>
+              <div class="bg-white p-3 sm:p-4 rounded-2xl border border-stone-200/90 shadow-sm card-lift">
+                <div class="text-brand-goldMuted font-serif font-black text-lg sm:text-2xl">14.000+</div>
+                <div class="text-[11px] sm:text-xs text-slate-500 font-semibold">Isu Hoaks Terdata di Ruang Publik</div>
+              </div>
+              <div class="bg-white p-3 sm:p-4 rounded-2xl border border-stone-200/90 shadow-sm card-lift">
+                <div class="text-brand-navy font-serif font-black text-lg sm:text-2xl">100% Wira</div>
+                <div class="text-[11px] sm:text-xs text-slate-500 font-semibold">Pahlawan Verifikasi Data Pelajar</div>
+              </div>
+            </div>
+
+            <!-- Generated illustration: Proklamasi -->
+            <figure class="fade-up illus-card illus-frame-gold h-44 sm:h-56 card-lift">
+              <picture>
+                <source srcset="assets/bab1-proklamasi.webp" type="image/webp">
+                <img src="assets/bab1-proklamasi.jpg"
+                     alt="Ilustrasi bergaya poster perjuangan: rakyat mengibarkan Sang Saka Merah Putih pada masa Proklamasi Kemerdekaan 1945"
+                     width="880" height="880" loading="lazy" decoding="async" draggable="false">
+              </picture>
+              <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-navy/92 via-brand-navy/55 to-transparent px-4 pt-8 pb-3">
+                <span class="block text-[10px] font-black tracking-[0.16em] text-brand-goldLight uppercase">Arsip Visual</span>
+                <span class="block font-serif font-bold text-white text-xs sm:text-sm">Kobaran semangat 17 Agustus 1945 — titik nol kedaulatan informasi Republik.</span>
+              </figcaption>
+            </figure>
+
+            <!-- CTAs -->
+            <div class="fade-up flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
+              <button class="bg-brand-red hover:bg-brand-redDark text-white font-bold px-5 sm:px-6 py-3.5 rounded-2xl shadow-lg shadow-brand-red/25 flex items-center gap-3 transition-transform hover:scale-[1.02]"
+                      onclick="goToSlide(1)">
+                <span>Mulai Belajar Bab Sejarah</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M17 8l4 4m0 0l-4 4m4-4H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+              </button>
+              <button class="bg-white hover:bg-stone-100 text-brand-navy border border-stone-300 font-bold px-5 py-3.5 rounded-2xl shadow-sm transition"
+                      onclick="goToSlide(3)">
+                Coba Simulator Cek Fakta
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: phone mockup -->
+          <div class="fade-up lg:col-span-5 flex justify-center">
+            <div class="relative w-full max-w-sm">
+              <div class="absolute -top-6 -left-4 sm:-left-6 w-64 h-64 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div class="absolute -bottom-8 -right-4 sm:-right-6 w-64 h-64 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+              <div class="relative bg-brand-navy rounded-[40px] p-3 shadow-2xl border-4 border-slate-700/60 ring-1 ring-white/20">
+                <div class="w-28 h-5 bg-slate-800 rounded-full mx-auto mb-3 flex items-center justify-center gap-2" aria-hidden="true">
+                  <div class="w-2 h-2 rounded-full bg-slate-900"></div>
+                  <div class="w-2 h-2 rounded-full bg-blue-900"></div>
+                </div>
+
+                <div class="bg-stone-50 rounded-[32px] p-4 text-brand-navy overflow-hidden space-y-3.5 border border-stone-200">
+                  <div class="flex items-center justify-between pb-2 border-b border-stone-200">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-7 h-7 rounded-lg bg-brand-red text-white flex items-center justify-center text-xs font-black">W</div>
+                      <div>
+                        <p class="text-xs font-bold leading-tight">WASPADA Mobile</p>
+                        <p class="text-[9px] text-emerald-600 font-semibold flex items-center gap-1">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Radar Aktif
+                        </p>
+                      </div>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">Level: Siasat</span>
+                  </div>
+
+                  <div class="bg-gradient-to-br from-brand-navy to-slate-900 text-white rounded-2xl p-4 text-center relative overflow-hidden shadow-inner">
+                    <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-brand-red/90 border-2 border-brand-gold flex items-center justify-center shadow-lg transform -rotate-3 hover:rotate-0 transition">
+                      <svg class="w-9 h-9 text-amber-200" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.41-3.03 8.52-7 9.53-3.97-1.01-7-5.12-7-9.53V6.3l7-3.12zM12 6a4 4 0 100 8 4 4 0 000-8zm-1 2h2v3h-2V8zm0 4h2v2h-2v-2z"></path>
+                      </svg>
+                    </div>
+                    <h4 class="font-serif font-bold text-sm text-amber-300">Perisai Siber Kebangsaan</h4>
+                    <p class="text-[11px] text-slate-300 mt-1">Deteksi Propaganda & Validasi Fakta Kemerdekaan</p>
+                  </div>
+
+                  <div class="space-y-2">
+                    <div class="text-[11px] font-bold text-slate-600 flex justify-between">
+                      <span>Simulasi Berita Medsos:</span>
+                      <span class="text-brand-red font-semibold">Terkontaminasi!</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-slate-800 space-y-1.5">
+                      <div class="font-bold text-slate-900 flex items-center justify-between">
+                        <span>"Klaim Kedaulatan Palsu 1947"</span>
+                        <span class="text-[9px] bg-red-100 text-red-800 font-extrabold px-1.5 py-0.5 rounded">HOAKS</span>
+                      </div>
+                      <p class="text-[10px] text-slate-600 leading-snug">
+                        Kanal penyebar memotong pidato Sutan Sjahrir di PBB untuk mendiskreditkan Republik.
+                      </p>
+                      <div class="pt-1 flex items-center gap-1.5 text-[9px] font-bold text-emerald-700">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                          <path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path>
+                        </svg>
+                        <span>Koreksi: Pidato utuh arsip PBB Lake Success (1947)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-white p-2 rounded-xl border border-stone-200 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-500 font-medium">Status Verifikasi</span>
+                    <span class="font-bold text-brand-red flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full bg-red-500"></span> 98.4% Terbukti Distorsi
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6 text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <span>Gunakan tombol panah, geser, atau menu <strong class="text-slate-500">PILIH BAB</strong> untuk berpindah</span>
+          <span class="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+          <span>Dibuat untuk Pelajar SMA Indonesia</span>
+        </div>
+      </div>
+    </section>
+<!-- ===================================================================== -->
+    <!-- BAB 2 — DIPLOMASI VS PERJUANGAN FISIK (1945–1949)                     -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-8 lg:p-12" id="slide-1" data-chapter="1" aria-label="Bab 2 Diplomasi versus Perjuangan Fisik">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center gap-8 py-6 pb-32 sm:pb-24">
+
+        <!-- Header -->
+        <div class="fade-up flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone-200 pb-4">
+          <div>
+            <span class="text-xs font-bold text-brand-red tracking-wider uppercase bg-red-50 px-2.5 py-1 rounded-md border border-brand-red/20">BAB 2: HISTORIOGRAFI PERJUANGAN</span>
+            <h2 class="font-serif text-2xl sm:text-4xl font-extrabold text-brand-navy mt-2">Diplomasi vs Perjuangan Fisik (1945–1949)</h2>
+            <p class="text-slate-600 text-sm mt-1 max-w-2xl">
+              Mempertahankan kemerdekaan memerlukan dua sayap: diplomasi catur meja perundingan dan ketegasan fisik di medan perang. Dua metode yang saling menguatkan.
+            </p>
+          </div>
+          <div class="text-left md:text-right shrink-0">
+            <span class="text-xs font-semibold text-slate-500">Korelasi Digital:</span>
+            <p class="text-xs font-bold text-brand-navy">Debat Logika (Diplomasi) & Ketahanan Benteng Data (Fisik)</p>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="space-y-3">
+          <h3 class="fade-up font-serif font-bold text-lg text-brand-navy flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            Linimasa Peristiwa Krusial Kedaulatan RI
+          </h3>
+          <div class="fade-up grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2.5">
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-red border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-red block">17 AGUSTUS 1945</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Proklamasi</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Pernyataan mutlak kemerdekaan bangsa Indonesia ke dunia.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-gold border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-goldMuted block">NOV 1946</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Linggarjati</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Diplomasi Sutan Sjahrir. Pengakuan de facto Jawa, Madura, Sumatra.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-red border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-red block">JULI 1947</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Agresi Militer I</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Belanda melanggar perjanjian; operasi militer serentak dimulai.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-gold border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-goldMuted block">JANUARI 1948</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Perjanjian Renville</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Tekanan PBB di atas kapal USS Renville; penetapan Garis Van Mook.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-red border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-red block">DES 1948</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Agresi Militer II</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Yogyakarta jatuh. Pembentukan PDRI di Bukittinggi oleh Sjafruddin.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-gold border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-goldMuted block">MEI 1949</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Roem-Roijen</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Pengembalian Pemimpin RI ke Yogya & kesepakatan gencatan senjata.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-brand-gold border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-brand-goldMuted block">AGU-NOV 1949</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">KMB di Den Haag</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Hatta memimpin delegasi menuju penyerahan kedaulatan tanpa syarat.</p>
+            </div>
+            <div class="bg-white p-3 rounded-xl border-t-4 border-emerald-600 border border-stone-200 card-lift">
+              <span class="text-[10px] font-black text-emerald-700 block">27 DES 1949</span>
+              <h4 class="font-bold text-xs text-slate-900 mt-1">Pengakuan Kedaulatan</h4>
+              <p class="text-[10px] text-slate-500 mt-1">Kedaulatan Indonesia diakui penuh secara internasional.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison (fixed nesting) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Fisik -->
+          <div class="fade-up bg-white rounded-2xl p-5 sm:p-6 border border-red-200 shadow-sm relative overflow-hidden card-lift">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center space-x-3 mb-4 relative">
+              <div class="w-10 h-10 rounded-xl bg-brand-red text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3l7 4v5c0 4.2-2.9 8-7 9-4.1-1-7-4.8-7-9V7l7-4z" stroke-width="1.8" stroke-linejoin="round"></path>
+                  <path d="M9.5 12l1.8 1.8L15 10" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-serif font-black text-lg text-brand-navy">Perjuangan Bersenjata (Fisik)</h4>
+                <p class="text-xs text-slate-500">TKR, Laskar Rakyat, Bambu Runcing, Serangan Umum 1 Maret</p>
+              </div>
+            </div>
+            <div class="space-y-3 text-xs relative">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="font-bold text-brand-red block mb-1">Kekuatan (Pros):</span>
+                <p class="text-slate-700">Membuktikan kepada dunia bahwa Republik Indonesia tidak mati; mematahkan klaim propaganda Belanda bahwa RI hanyalah gerombolan liar tanpa tentara.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-700 block mb-1">Tantangan (Cons):</span>
+                <p class="text-slate-700">Korban jiwa sipil dan militer yang sangat besar, logistik dan amunisi terbatas, blokade ekonomi ketat oleh musuh.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900">
+                <span class="font-bold block">Refleksi Literasi Digital SMA:</span>
+                Tindakan berani menyaring dan menolak mentah-mentah konten fitnah sebelum menyebar luas di grup WhatsApp kelas.
+              </div>
+            </div>
+          </div>
+
+          <!-- Diplomasi -->
+          <div class="fade-up bg-white rounded-2xl p-5 sm:p-6 border border-amber-200 shadow-sm relative overflow-hidden card-lift">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full pointer-events-none"></div>
+            <div class="flex items-center space-x-3 mb-4 relative">
+              <div class="w-10 h-10 rounded-xl bg-brand-gold text-brand-navy flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 3h8v3H8zM6 6h12v13a2 2 0 01-2 2H8a2 2 0 01-2-2V6z" stroke-width="1.8" stroke-linejoin="round"></path>
+                  <path d="M9 11h6M9 15h4" stroke-width="1.8" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-serif font-black text-lg text-brand-navy">Perjuangan Meja Diplomasi</h4>
+                <p class="text-xs text-slate-500">Sjahrir, Moh. Hatta, Agus Salim, Roem, PBB (KTN & UNCI)</p>
+              </div>
+            </div>
+            <div class="space-y-3 text-xs relative">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="font-bold text-brand-goldMuted block mb-1">Kekuatan (Pros):</span>
+                <p class="text-slate-700">Mendapatkan legitimasi hukum internasional, memojokkan agresi musuh di Dewan Keamanan PBB, dan memutus dukungan sekutu bagi penjajah.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-700 block mb-1">Tantangan (Cons):</span>
+                <p class="text-slate-700">Sering kali terpaksa berkompromi wilayah (wilayah RI menyempit pasca-Renville) dan memicu gejolak pro-kontra di kalangan laskar internal.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900">
+                <span class="font-bold block">Refleksi Literasi Digital SMA:</span>
+                Keahlian menyajikan data tandingan, melampirkan tautan sumber primer, dan berdebat secara rasional dan santun.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual archive band -->
+        <figure class="fade-up grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4 items-center bg-white rounded-2xl p-4 border border-stone-200 shadow-sm">
+          <div class="illus-card h-48 sm:h-56 card-lift">
+            <img src="assets/ilustrasi-diplomasi.svg"
+                 alt="Ilustrasi suasana perundingan meja diplomasi Indonesia dengan bendera Merah Putih dan lambang PBB 1947"
+                 width="320" height="400" loading="lazy" decoding="async" draggable="false">
+          </div>
+          <div class="space-y-2">
+            <span class="text-[10px] font-black tracking-[0.16em] text-brand-goldMuted uppercase">Galeri Visual</span>
+            <h4 class="font-serif font-black text-lg text-brand-navy">Dua Sayap, Satu Kedaulatan</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Meja perundingan dan medan gerilya bukan dua kubu yang berlawanan — keduanya sayap dari satu tubuh perjuangan.
+              Diplomasi memberi <strong>legitimasi</strong>, perjuangan fisik memberi <strong>buktinya</strong>. Nyaris sama dengan literasi data hari ini:
+              kamu butuh argumen yang santun sekaligus bukti yang kuat sebelum membantah hoaks di grup kelas.
+            </p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-red-50 text-brand-red border border-red-200">Legitimasi Internasional</span>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-brand-goldMuted border border-amber-200">Sumber Primer</span>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">Argumen Santun</span>
+            </div>
+          </div>
+        </figure>
+
+        <!-- Slide footer nav -->
+        <div class="flex flex-wrap justify-between items-center gap-3 text-xs text-slate-500 pt-3 border-t border-stone-200">
+          <button class="text-slate-600 font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(0)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Kembali ke Bab 1
+          </button>
+          <button class="text-brand-red font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(2)">
+            Lanjut ke Bab 3: Garis Van Mook
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+<!-- ===================================================================== -->
+    <!-- BAB 3 — GARIS VAN MOOK & STRATEGI GERILYA                             -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-8 lg:p-12" id="slide-2" data-chapter="2" aria-label="Bab 3 Garis Van Mook dan Strategi Gerilya">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center gap-6 py-6 pb-32 sm:pb-24">
+
+        <!-- Header -->
+        <div class="fade-up border-b border-stone-200 pb-3">
+          <span class="text-xs font-bold text-brand-red tracking-wider uppercase bg-red-50 px-2.5 py-1 rounded-md border border-brand-red/20">BAB 3: TAKTIK WILAYAH & INFORMASI</span>
+          <h2 class="font-serif text-2xl sm:text-4xl font-extrabold text-brand-navy mt-2">Garis Van Mook & Strategi Gerilya</h2>
+          <p class="text-slate-600 text-sm mt-1 max-w-3xl">
+            Garis Van Mook adalah batas sepihak buatan Belanda (pasca Agresi Militer I 1947) untuk mengisolasi kantong-kantong Republik.
+            Namun Jenderal Soedirman dan TNI merespons dengan <em>Wehrkreise</em> (kantong gerilya rakyat semesta), menembus kepungan dan membalikkan keadaan.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Map -->
+          <div class="fade-up lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-stone-300 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-stone-200 pb-2 gap-2">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-600 animate-ping shrink-0"></div>
+                <span class="font-serif font-bold text-sm text-brand-navy">Peta Konseptual: Demarkasi & Kantong Gerilya</span>
+              </div>
+              <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded border shrink-0 hidden sm:block">Jawa & Sumatra (1947–1948)</span>
+            </div>
+
+            <div class="relative w-full bg-slate-900 rounded-xl overflow-hidden border border-slate-800 p-3 flex flex-col gap-3">
+              <div class="flex justify-between items-start text-[11px] text-slate-300 gap-3">
+                <div>
+                  <span class="text-amber-400 font-bold block">GARIS STATUS QUO VAN MOOK</span>
+                  <span class="text-[9px] text-slate-400">Garis Kuning Putus-Putus = Klaim Sepihak Belanda</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-emerald-400 font-bold block">WEHRKREISE TNI</span>
+                  <span class="text-[9px] text-slate-400">Sistem Pertahanan Kantong Gerilya</span>
+                </div>
+              </div>
+
+              <svg class="w-full h-auto" viewBox="0 0 600 220" role="img" aria-label="Diagram peta Jawa yang menunjukkan Garis Van Mook memisahkan wilayah dudukan NICA dari kantong gerilya Wehrkreise TNI">
+                <defs>
+                  <pattern id="vmGrid" height="20" width="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E293B" stroke-width="0.5"></path>
+                  </pattern>
+                  <marker id="vmArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                    <path d="M0 0 L6 3 L0 6 Z" fill="#10B981"></path>
+                  </marker>
+                </defs>
+
+                <rect fill="url(#vmGrid)" height="220" width="600"></rect>
+
+                <path d="M 40,110 Q 120,80 200,90 T 360,95 T 500,105 Q 560,115 540,135 Q 460,145 350,140 T 180,145 Q 60,150 40,110 Z"
+                      fill="#1E293B" stroke="#334155" stroke-width="2"></path>
+
+                <path d="M 40,110 Q 120,80 200,90 L 220,138 Q 120,142 40,110 Z"
+                      fill="rgba(185, 28, 28, 0.25)" stroke="#EF4444" stroke-dasharray="4,4" stroke-width="1.5"></path>
+
+                <line stroke="#F59E0B" stroke-dasharray="6,4" stroke-width="3" x1="210" x2="230" y1="75" y2="155"></line>
+                <line stroke="#F59E0B" stroke-dasharray="6,4" stroke-width="3" x1="390" x2="410" y1="80" y2="150"></line>
+
+                <circle cx="310" cy="118" fill="#B91C1C" r="14" stroke="#FAF7F2" stroke-width="2"></circle>
+                <text fill="#FFFFFF" font-size="9" font-weight="bold" text-anchor="middle" x="310" y="122">YOGYA</text>
+
+                <path d="M 290,115 Q 240,100 170,110" fill="none" marker-end="url(#vmArrow)" stroke="#10B981" stroke-width="2"></path>
+                <path d="M 330,120 Q 400,105 450,115" fill="none" stroke="#10B981" stroke-width="2"></path>
+
+                <circle cx="160" cy="110" fill="#10B981" r="6" stroke="#FFFFFF" stroke-width="1"></circle>
+                <circle cx="450" cy="115" fill="#10B981" r="6" stroke="#FFFFFF" stroke-width="1"></circle>
+                <circle cx="130" cy="125" fill="#10B981" r="5" stroke="#FFFFFF" stroke-width="1"></circle>
+                <circle cx="480" cy="125" fill="#10B981" r="5" stroke="#FFFFFF" stroke-width="1"></circle>
+
+                <text fill="#FCA5A5" font-size="10" font-weight="bold" x="66" y="95">Daerah Dudukan NICA</text>
+                <text fill="#FBBF24" font-size="9" font-weight="bold" x="196" y="70">Garis Van Mook</text>
+                <text fill="#E2E8F0" font-size="10" font-weight="bold" text-anchor="middle" x="310" y="150">Ibukota RI (Pusat Komando)</text>
+                <text fill="#6EE7B7" font-size="9" font-weight="bold" text-anchor="end" x="540" y="100">Kantong Siliwangi / TNI</text>
+              </svg>
+
+              <div class="bg-slate-800/90 rounded-lg p-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] text-slate-300">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3 h-0.5 bg-amber-400 inline-block"></span> <span>Garis Sekat Van Mook</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-red-600 inline-block"></span> <span>Wilayah RI</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> <span>Sel Gerilya (Wehrkreise)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded bg-red-900/60 border border-red-500 inline-block"></span> <span>Klaim Belanda</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 italic">
+              *Catatan Sejarah: Belanda mengklaim bahwa dengan menguasai kota besar dan jalan raya, RI telah runtuh.
+              Jenderal Soedirman membuktikan kekuasaan sejati ada di hati rakyat pedesaan melalui perang gerilya.
+            </p>
+          </div>
+
+          <!-- Strategy -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="fade-up bg-brand-navy text-white rounded-2xl p-5 shadow-lg space-y-3">
+              <div class="flex items-center gap-2 text-brand-gold font-bold text-xs uppercase tracking-wider">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                </svg>
+                Relevansi Era Informasi
+              </div>
+              <h3 class="font-serif font-bold text-lg text-white">"Echo Chamber" adalah Garis Van Mook Modern!</h3>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Di media sosial, algoritma menciptakan dinding polarisasi yang memisahkan kelompok masyarakat.
+                Ini mirip garis Van Mook yang memotong komunikasi Republik.
+              </p>
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="fade-up bg-white p-3.5 rounded-xl border border-stone-200 card-lift flex gap-3 items-start">
+                <div class="w-7 h-7 rounded-lg bg-red-100 text-brand-red flex items-center justify-center font-bold text-xs shrink-0">1</div>
+                <div>
+                  <h4 class="font-bold text-xs text-brand-navy">Tembus Blokade Algoritma</h4>
+                  <p class="text-[11px] text-slate-600 mt-0.5">Jangan hanya membaca kabar dari satu lingkaran (echo chamber). Carilah perspektif objektif dan data pembanding independen.</p>
+                </div>
+              </div>
+              <div class="fade-up bg-white p-3.5 rounded-xl border border-stone-200 card-lift flex gap-3 items-start">
+                <div class="w-7 h-7 rounded-lg bg-amber-100 text-brand-goldMuted flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                <div>
+                  <h4 class="font-bold text-xs text-brand-navy">Taktik Sel Gerilya Informasi</h4>
+                  <p class="text-[11px] text-slate-600 mt-0.5">Sebarkan klarifikasi hoaks secara desentralisasi dari obrolan keluarga, grup teman sebaya, hingga media sosial pribadi.</p>
+                </div>
+              </div>
+              <div class="fade-up bg-white p-3.5 rounded-xl border border-stone-200 card-lift flex gap-3 items-start">
+                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">3</div>
+                <div>
+                  <h4 class="font-bold text-xs text-brand-navy">Perlindungan Saksi & Sumber Primer</h4>
+                  <p class="text-[11px] text-slate-600 mt-0.5">Selalu periksa rujukan utama (arsip resmi, undang-undang, siaran pers otoritas) bukan sekadar tangkapan layar tanpa tanggal.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Guerrilla illustration -->
+            <figure class="fade-up illus-card illus-frame-gold h-52 sm:h-60 card-lift">
+              <img src="assets/ilustrasi-gerilya.svg"
+                   alt="Ilustrasi strategi Wehrkreise: komandan gerilya di puncak bukit dengan garis Van Mook terputus-putus dan titik-titik kantong gerilya rakyat"
+                   width="320" height="400" loading="lazy" decoding="async" draggable="false">
+              <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-navy/92 via-brand-navy/50 to-transparent px-3 pt-8 pb-3">
+                <span class="block font-serif font-bold text-white text-xs">Wehrkreise — kekuasaan sejati ada di jaringan rakyat.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- Footer nav -->
+        <div class="flex flex-wrap justify-between items-center gap-3 text-xs text-slate-500 pt-3 border-t border-stone-200">
+          <button class="text-slate-600 font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(1)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Kembali ke Bab 2
+          </button>
+          <button class="text-brand-red font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(3)">
+            Pelajari Fitur & Coba Simulator WASPADA
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+<!-- ===================================================================== -->
+    <!-- BAB 4 — KONSEP APLIKASI & SIMULATOR CEK FAKTA WASPADA                 -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-6 lg:p-10" id="slide-3" data-chapter="3" aria-label="Bab 4 Konsep Aplikasi dan Simulator WASPADA">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center gap-5 py-6 pb-32 sm:pb-24">
+
+        <!-- Header -->
+        <div class="fade-up flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone-200 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-red tracking-wider uppercase bg-red-50 px-2.5 py-1 rounded-md border border-brand-red/20">BAB 4: SOLUSI TEKNOLOGI & SIMULATOR LANGSUNG</span>
+            <h2 class="font-serif text-2xl sm:text-4xl font-extrabold text-brand-navy mt-2">Konsep Aplikasi & Simulator Cek Fakta WASPADA</h2>
+            <p class="text-slate-600 text-sm mt-1 max-w-2xl">
+              Arsitektur sistem deteksi hoaks yang menggabungkan kecerdasan buatan, basis data arsip sejarah nasional, dan simulator mandiri bagi pelajar se-Nusantara.
+            </p>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0 self-start md:self-auto">Framework: SMA Anti-Disinformasi</span>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          <div class="fade-up bg-white rounded-2xl p-4 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-red-100 text-brand-red flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6" stroke-width="2"></circle>
+                  <path d="M20 20l-4.2-4.2" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <h4 class="font-serif font-bold text-sm text-brand-navy">Cek Fakta Instan</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-snug">
+                Tempel teks, tautan, atau unggah tangkapan layar. Sistem memindai kecocokan dengan 50+ pangkalan data verifikasi resmi nasional.
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-stone-100 text-[10px] text-brand-red font-bold">Latensi: < 1.8 Detik</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-4 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-brand-goldMuted flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 12a4 4 0 100-8 4 4 0 000 8z" stroke-width="2"></path>
+                  <path d="M12 14v7M8 21h8M4 12h2M18 12h2" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <h4 class="font-serif font-bold text-sm text-brand-navy">Radar Propaganda</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-snug">
+                Mendeteksi narasi buatan bot, rekayasa sentimen kebencian SARA, dan pola penggiringan opini yang memecah-belah persatuan pemuda.
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-stone-100 text-[10px] text-brand-goldMuted font-bold">Analisis Semantik AI</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-4 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3l7 4v5c0 4.2-2.9 8-7 9-4.1-1-7-4.8-7-9V7l7-4z" stroke-width="2" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+              <h4 class="font-serif font-bold text-sm text-brand-navy">Mode Siasat</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-snug">
+                Panduan taktis bagi siswa untuk membalas pesan hoaks di grup obrolan dengan kartu infografis fakta resmi yang ringkas dan santun.
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-stone-100 text-[10px] text-blue-700 font-bold">Siap Bagikan 1-Klik</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-4 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 11v2a1 1 0 001 1h3l4 3V7L8 10H5a1 1 0 00-1 1z" stroke-width="2" stroke-linejoin="round"></path>
+                  <path d="M17 8a5 5 0 010 8" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </div>
+              <h4 class="font-serif font-bold text-sm text-brand-navy">Lapor Hoaks</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-snug">
+                Kanal pelaporan terdesentralisasi bagi OSIS & pelajar untuk menandai konten manipulatif agar segera ditinjau oleh tim fakta.
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-stone-100 text-[10px] text-purple-700 font-bold">Gotong Royong Siswa</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-4 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 11l5-4 5 4v7a1 1 0 01-1 1h-8a1 1 0 01-1-1v-7z" stroke-width="2" stroke-linejoin="round"></path>
+                  <path d="M10 19v-4h4v4" stroke-width="2" stroke-linejoin="round"></path>
+                </svg>
+              </div>
+              <h4 class="font-serif font-bold text-sm text-brand-navy">Pos Persatuan</h4>
+              <p class="text-[11px] text-slate-600 mt-1 leading-snug">
+                Ruang literasi bersama yang memuat ensiklopedia sejarah kemerdekaan RI 1945–1949 yang telah diverifikasi oleh sejarawan profesional.
+              </p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-stone-100 text-[10px] text-emerald-700 font-bold">Arsip Digital Terbuka</div>
+          </div>
+        </div>
+
+        <!-- Live fact-check simulator -->
+        <div class="fade-up bg-white rounded-3xl p-4 sm:p-6 border-2 border-brand-red/30 shadow-xl space-y-5">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-stone-200 pb-3">
+            <div>
+              <div class="inline-flex items-center gap-2 text-brand-red font-bold text-xs uppercase tracking-wider mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-red animate-ping"></span>
+                Uji Mandiri: Simulator Analisis Teks & Cek Fakta WASPADA
+              </div>
+              <h3 class="font-serif font-bold text-xl sm:text-2xl text-brand-navy">Detektor Propaganda & Verifikasi Mandiri Siswa</h3>
+              <p class="text-xs sm:text-sm text-slate-600">
+                Ketik atau tempel narasi/berita mencurigakan untuk mendeteksi indikasi hoaks, disinformasi, bias emosional, dan kesesuaian fakta sejarah.
+              </p>
+            </div>
+            <span class="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-brand-goldMuted border border-amber-300 flex items-center gap-1.5 shrink-0 self-start md:self-auto">
+              <span class="w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span>
+              Mesin Verifikasi AI + Pangkalan Data ANRI
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Input -->
+            <div class="lg:col-span-7 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-800" for="liveTextInput">Kotak Input Teks / Pesan Berantai:</label>
+                <span class="text-[11px] text-slate-400" id="charCount">0 karakter</span>
+              </div>
+
+              <div class="relative">
+                <textarea id="liveTextInput" rows="4"
+                          placeholder="Ketik atau tempel berita, pesan broadcast WhatsApp, atau kutipan di sini... (Contoh: 'PBB akui kedaulatan RI...' atau 'Klaim rahasia bansos cair...')"
+                          class="w-full text-xs sm:text-sm rounded-2xl border-stone-300 focus:border-brand-red focus:ring-brand-red p-3.5 pr-24 bg-stone-50 text-slate-800 transition placeholder:text-slate-400"></textarea>
+                <button type="button" onclick="clearLiveInput()" title="Bersihkan input"
+                        class="absolute top-3 right-3 text-slate-500 hover:text-brand-red text-xs font-bold px-2 py-1 rounded-lg bg-white/90 border border-stone-200 hover:bg-stone-100 transition">
+                  Clear
+                </button>
+              </div>
+
+              <div class="space-y-1.5">
+                <span class="text-[11px] font-bold text-slate-600">Preset Uji Cepat (klik untuk mencoba langsung):</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <button class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-brand-red border border-red-200 transition" onclick="loadPreset('5g')">Vaksin 5G Chip Magnetik (Hoaks)</button>
+                  <button class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition" onclick="loadPreset('linggarjati')">Belanda Akui De Facto Linggarjati (Valid)</button>
+                  <button class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-brand-red border border-red-200 transition" onclick="loadPreset('bansos')">Bansos 15 Juta Bit.ly Abal-abal (Hoaks)</button>
+                  <button class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition" onclick="loadPreset('agresi')">Agresi Militer I Juli 1947 (Valid)</button>
+                  <button class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-brand-goldMuted border border-amber-200 transition" onclick="loadPreset('gempa')">Video Gempa Lama Diklaim Hari Ini (Menyesatkan)</button>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 pt-1">
+                <button id="btnAnalyzeLive" onclick="triggerLiveAnalysis()"
+                        class="flex-1 bg-brand-red hover:bg-brand-redDark text-white font-bold text-xs sm:text-sm py-3 px-5 rounded-xl shadow-md shadow-brand-red/25 flex items-center justify-center gap-2 transition active:scale-95">
+                  <span id="analyzeBtnIcon">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="11" cy="11" r="6" stroke-width="2.2"></circle>
+                      <path d="M20 20l-4.2-4.2" stroke-width="2.2" stroke-linecap="round"></path>
+                    </svg>
+                  </span>
+                  <span id="analyzeBtnText">Periksa Teks Sekarang</span>
+                </button>
+                <button onclick="clearLiveInput()" class="bg-stone-100 hover:bg-stone-200 text-slate-700 font-bold text-xs sm:text-sm py-3 px-4 rounded-xl border border-stone-300 transition">Reset</button>
+              </div>
+            </div>
+
+            <!-- Output -->
+            <div id="liveResultContainer" class="lg:col-span-5 bg-stone-50 rounded-2xl p-4 sm:p-5 border border-stone-200 space-y-3 relative overflow-hidden">
+              <div id="liveLoadingOverlay" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm z-20 flex-col items-center justify-center p-4 text-center">
+                <div class="w-10 h-10 border-4 border-brand-red border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p class="font-serif font-bold text-xs text-brand-navy">Mencocokkan dengan Arsip Sejarah & Pola Hoaks...</p>
+                <p class="text-[10px] text-slate-500 mt-1">Memindai indikator clickbait, bot sentimen, dan validitas fakta</p>
+              </div>
+
+              <div class="flex items-center justify-between border-b border-stone-200 pb-2">
+                <span id="liveStatusBadge" class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-red-100 text-brand-red border border-red-300 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+                  <span>HOAKS TERDETEKSI</span>
+                </span>
+                <span id="liveAnalysisTime" class="text-[10px] text-slate-400 font-mono">Real-Time</span>
+              </div>
+
+              <div>
+                <h4 id="liveResultHeadline" class="font-serif font-black text-sm text-brand-navy">Teks Memiliki Ciri Rekayasa & Manipulasi Disinformasi</h4>
+                <p id="liveResultReason" class="text-[11px] text-slate-600 mt-1 leading-snug">
+                  Ditemukan pola provokasi emosional, ketiadaan rujukan resmi arsip, dan frasa tipikal hoaks berantai yang sering disebarkan untuk memicu keresahan massa.
+                </p>
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-stone-200 space-y-1.5">
+                <div class="flex justify-between items-center text-[11px] font-bold">
+                  <span id="liveMeterLabel" class="text-slate-700">Tingkat Risiko Disinformasi</span>
+                  <span id="liveMeterValue" class="text-brand-red font-black text-xs">92% Berbahaya</span>
+                </div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden">
+                  <div id="liveMeterBar" class="bg-brand-red h-full rounded-full transition-all duration-700" style="width: 92%;"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1.5 text-[10px]">
+                <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-stone-200">
+                  <span class="text-slate-600">Indikasi Sensasionalisme / Klik Bait:</span>
+                  <span id="paramClickbait" class="font-bold text-red-600 text-right">Tinggi (Provokatif)</span>
+                </div>
+                <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-stone-200">
+                  <span class="text-slate-600">Pola Tautan / Sumber Rujukan:</span>
+                  <span id="paramSource" class="font-bold text-red-600 text-right">Domain Meragukan / Nir-Sumber</span>
+                </div>
+                <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-white border border-stone-200">
+                  <span class="text-slate-600">Kesesuaian Arsip Data & Sejarah:</span>
+                  <span id="paramHistory" class="font-bold text-red-600 text-right">Bertentangan dengan ANRI</span>
+                </div>
+              </div>
+
+              <div id="liveAdviceBox" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-[10px] space-y-1">
+                <span class="font-bold block text-amber-900">Rekomendasi Siasat Ksatria Data:</span>
+                <p id="liveAdviceText" class="text-amber-800 leading-snug">
+                  Tahan jempol! Jangan sebarkan ke grup WhatsApp kelas atau keluarga. Verifikasi lewat situs resmi Kominfo / TurnBackHoax.id.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulator switcher -->
+        <div class="fade-up bg-gradient-to-r from-brand-navy via-slate-900 to-brand-navyLight rounded-3xl p-5 sm:p-6 text-white shadow-xl">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-6 space-y-3">
+              <span class="text-xs font-bold text-brand-gold tracking-widest uppercase">SIMULASI VERIFIKASI LANGSUNG</span>
+              <h3 class="font-serif font-black text-xl sm:text-2xl text-white">Bagaimana WASPADA Menguji Informasi?</h3>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                Pilih salah satu status di bawah untuk melihat bagaimana antarmuka seluler aplikasi WASPADA menyajikan bukti fakta secara transparan kepada pelajar SMA.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button id="btnSimValid" onclick="setSimResult('valid')" class="px-3 py-1.5 rounded-xl font-bold text-xs border border-emerald-500 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white transition">
+                  Contoh: Valid
+                </button>
+                <button id="btnSimMisleading" onclick="setSimResult('misleading')" class="px-3 py-1.5 rounded-xl font-bold text-xs border border-amber-500 bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-white transition">
+                  Contoh: Menyesatkan
+                </button>
+                <button id="btnSimHoax" onclick="setSimResult('hoax')" class="px-3 py-1.5 rounded-xl font-bold text-xs border border-red-500 bg-red-600 text-white shadow-md transition">
+                  Contoh: Hoaks
+                </button>
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 flex justify-center">
+              <div id="simCardBox" class="w-full max-w-md bg-stone-50 text-brand-navy rounded-2xl p-4 shadow-xl border-2 border-brand-red transition-all duration-300">
+                <div class="flex items-center justify-between gap-2 border-b border-stone-200 pb-2">
+                  <span id="simTag" class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-red-100 text-brand-red border border-red-300">
+                    STATUS: HOAKS / FABRIKASI
+                  </span>
+                  <span class="text-[10px] text-slate-400 shrink-0">ID Uji: #WSP-1949-88</span>
+                </div>
+                <div class="mt-3 space-y-2">
+                  <div id="simTitle" class="text-xs font-bold text-slate-800">
+                    "Klaim: NICA Menyatakan RI Sudah Menyerah Total pada 19 Desember 1948"
+                  </div>
+                  <p id="simDesc" class="text-[11px] text-slate-600">
+                    Hasil Analisis WASPADA: Narasi ini adalah <strong>disinformasi sejarah</strong>. Faktanya, Presiden Soekarno telah memberikan mandat telegram pembentukan Pemerintah Darurat RI (PDRI) kepada Sjafruddin Prawiranegara di Bukittinggi.
+                  </p>
+                  <div class="pt-1">
+                    <div class="flex justify-between text-[10px] font-bold text-slate-700 mb-1">
+                      <span id="simScoreLabel">Tingkat Kebohongan Konten</span>
+                      <span id="simScoreValue" class="text-brand-red font-black">94% Palsu</span>
+                    </div>
+                    <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+                      <div id="simBar" class="bg-brand-red h-full rounded-full transition-all duration-500" style="width: 94%;"></div>
+                    </div>
+                  </div>
+                  <div class="mt-2 pt-2 border-t border-stone-200 flex flex-wrap justify-between items-center gap-2">
+                    <span id="simAdvice" class="text-[10px] text-slate-500">Rekomendasi: Jangan sebarkan ke grup sekolah</span>
+                    <button type="button" onclick="downloadFactCard()" class="bg-brand-navy hover:bg-slate-800 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition">Unduh Kartu Fakta</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer nav -->
+        <div class="flex flex-wrap justify-between items-center gap-3 text-xs text-slate-500 pt-3 border-t border-stone-200">
+          <button class="text-slate-600 font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(2)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Kembali ke Bab 3
+          </button>
+          <button class="text-brand-red font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(4)">
+            Lihat Nilai Filosofis Pejuang
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+<!-- ===================================================================== -->
+    <!-- BAB 5 — NILAI FILOSOFIS PEJUANG KEMERDEKAAN                           -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-8 lg:p-12" id="slide-4" data-chapter="4" aria-label="Bab 5 Nilai Filosofis Pejuang">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center gap-6 py-6 pb-32 sm:pb-24">
+
+        <!-- Header -->
+        <div class="fade-up border-b border-stone-200 pb-3">
+          <span class="text-xs font-bold text-brand-red tracking-wider uppercase bg-red-50 px-2.5 py-1 rounded-md border border-brand-red/20">BAB 5: KARAKTER & INTEGRITAS</span>
+          <h2 class="font-serif text-2xl sm:text-4xl font-extrabold text-brand-navy mt-2">5 Nilai Filosofis Pejuang untuk Pelajar Abad 21</h2>
+          <p class="text-slate-600 text-sm mt-1 max-w-3xl">
+            Teknologi hanyalah alat; integritas moral dan kecintaan pada tanah air adalah kompas penuntun.
+            Berikut lima nilai keteladanan 1945–1949 yang ditanamkan dalam aplikasi WASPADA.
+          </p>
+        </div>
+
+        <!-- Value cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+          <div class="fade-up bg-white rounded-2xl p-5 border-t-4 border-brand-red border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-serif font-black text-brand-red">NILAI I</span>
+              <h3 class="font-serif font-bold text-base text-brand-navy mt-1">Siasat Gerilya</h3>
+              <p class="text-xs text-slate-500 font-semibold mb-2">Fleksibilitas & Ketangguhan</p>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Menghadapi musuh dengan senjata canggih tidak harus frontal bila belum siap.
+                Pelajar bijak mundur sejenak untuk meneliti kebenaran sebelum membagikan kabar viral.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-brand-red">"Pantang gegabah, kuasai data."</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-5 border-t-4 border-brand-gold border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-serif font-black text-brand-goldMuted">NILAI II</span>
+              <h3 class="font-serif font-bold text-base text-brand-navy mt-1">Sistem Wehrkreise</h3>
+              <p class="text-xs text-slate-500 font-semibold mb-2">Pertahanan Berjejaring Rakyat</p>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Setiap sekolah dan kelas membentuk sel mandiri pemeriksa fakta.
+                Tidak bergantung pada satu figur sentral, melainkan gotong-royong seluruh teman sebaya.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-brand-goldMuted">"Kekuatan ada pada jaringan kompak."</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-5 border-t-4 border-brand-navy border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-serif font-black text-brand-navy">NILAI III</span>
+              <h3 class="font-serif font-bold text-base text-brand-navy mt-1">Dwi-Tunggal Aksi</h3>
+              <p class="text-xs text-slate-500 font-semibold mb-2">Diplomasi Santun + Ketegasan Sikap</p>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Meniru harmoni Sjahrir-Hatta dan Soedirman. Menegur teman yang menyebar hoaks dilakukan dengan etika diplomatis tanpa mencemooh, namun tetap tegas pada kebenaran.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-brand-navy">"Cerdas berlogika, santun bertutur."</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-5 border-t-4 border-emerald-600 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-serif font-black text-emerald-700">NILAI IV</span>
+              <h3 class="font-serif font-bold text-base text-brand-navy mt-1">Sumpah Persatuan</h3>
+              <p class="text-xs text-slate-500 font-semibold mb-2">Kekebalan dari Polarisasi</p>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Musuh senang memecah-belah dengan politik <em>devide et impera</em>.
+                Generasi muda menolak diprovokasi oleh isu adu-domba suku, agama, dan antar-golongan.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-emerald-700">"Satu Nusa, Satu Bangsa, Satu Data."</div>
+          </div>
+
+          <div class="fade-up bg-white rounded-2xl p-5 border-t-4 border-purple-600 border border-stone-200 shadow-sm card-lift flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-serif font-black text-purple-700">NILAI V</span>
+              <h3 class="font-serif font-bold text-base text-brand-navy mt-1">Kenali Medan</h3>
+              <p class="text-xs text-slate-500 font-semibold mb-2">Literasi Algoritma & Arsitektur Siber</p>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Pejuang 1945 hapal kontur bukit dan rimba tanah air.
+                Siswa SMA masa kini wajib paham cara kerja algoritma, bot medsos, dan celah keamanan data pribadi.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-purple-700">"Kuasai rimba digital demi kedaulatan."</div>
+          </div>
+        </div>
+
+        <!-- Quote -->
+        <div class="fade-up bg-stone-100 rounded-2xl p-5 border border-stone-300 flex items-start gap-4">
+          <div class="text-3xl sm:text-4xl text-brand-gold font-serif leading-none shrink-0">&ldquo;</div>
+          <p class="text-xs sm:text-sm text-slate-700 italic font-serif leading-relaxed">
+            Perjuanganku lebih mudah karena mengusir penjajah, tapi perjuanganmu akan lebih sulit karena melawan bangsamu sendiri yang terpecah oleh kabar bohong.
+            <span class="not-italic font-sans font-bold text-brand-red ml-1">— Refleksi Pesan Bung Karno</span>
+          </p>
+        </div>
+
+        <!-- Footer nav -->
+        <div class="flex flex-wrap justify-between items-center gap-3 text-xs text-slate-500 pt-3 border-t border-stone-200">
+          <button class="text-slate-600 font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(3)">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            Kembali ke Bab 4
+          </button>
+          <button class="text-brand-red font-bold hover:underline flex items-center gap-1 transition" onclick="goToSlide(5)">
+            Uji Pemahaman di Kuis Interaktif
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+<!-- ===================================================================== -->
+    <!-- BAB 6 — KUIS INTERAKTIF & KESIMPULAN                                  -->
+    <!-- ===================================================================== -->
+    <section class="slide-page bg-[#FAF7F2] p-4 sm:p-8 lg:p-12" id="slide-5" data-chapter="5" aria-label="Bab 6 Kuis Interaktif dan Kesimpulan">
+      <div class="max-w-7xl mx-auto w-full min-h-full flex flex-col justify-center gap-5 py-6 pb-32 sm:pb-24">
+
+        <!-- Header -->
+        <div class="fade-up flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-stone-200 pb-3">
+          <div>
+            <span class="text-xs font-bold text-brand-red tracking-wider uppercase bg-red-50 px-2.5 py-1 rounded-md border border-brand-red/20">BAB 6: EVALUASI & KELULUSAN</span>
+            <h2 class="font-serif text-2xl sm:text-4xl font-extrabold text-brand-navy mt-2">Uji Cerdas Wira Muda SMA</h2>
+            <p class="text-slate-600 text-sm mt-1 max-w-2xl">
+              Jawab 5 pertanyaan studi kasus sejarah dan literasi data untuk menguji kesiapanmu menjadi Duta WASPADA.
+              Setiap soal dinilai langsung begitu kamu memilih jawaban.
+            </p>
+          </div>
+          <div class="bg-white px-4 py-2 rounded-xl border border-stone-300 shadow-sm text-left sm:text-right shrink-0">
+            <span class="text-[10px] text-slate-500 font-bold block">SKOR ANDA</span>
+            <span id="quizScoreText" class="font-serif font-black text-xl text-brand-red">0 / 5 Benar</span>
+            <span id="quizProgressText" class="text-[10px] text-slate-400 font-semibold block">0 dari 5 soal dijawab</span>
+          </div>
+        </div>
+
+        <!-- Questions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+
+          <!-- Q1 -->
+          <div class="fade-up bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between card-lift" id="quizCard-1">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2 gap-2">
+                <span class="font-bold text-brand-red">SOAL 1 &bull; SEJARAH</span>
+                <span class="text-[10px] text-slate-400 shrink-0">Poin: 20</span>
+              </div>
+              <h4 class="font-bold text-sm text-brand-navy mb-3 leading-snug">
+                Apakah tujuan utama Belanda menetapkan "Garis Van Mook" pasca Agresi Militer I 1947?
+              </h4>
+              <div class="space-y-2 text-xs">
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(1, 'A', false, this)">
+                  A. Membantu pembangunan ekonomi pedesaan RI
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(1, 'B', true, this)">
+                  B. Mengisolasi wilayah RI & mengklaim daerah subur secara sepihak
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(1, 'C', false, this)">
+                  C. Membagi persenjataan secara adil kepada laskar
+                </button>
+              </div>
+            </div>
+            <div id="feedback-1" class="hidden mt-3 p-3 rounded-xl text-xs leading-snug"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="fade-up bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between card-lift" id="quizCard-2">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2 gap-2">
+                <span class="font-bold text-brand-red">SOAL 2 &bull; DIPLOMASI</span>
+                <span class="text-[10px] text-slate-400 shrink-0">Poin: 20</span>
+              </div>
+              <h4 class="font-bold text-sm text-brand-navy mb-3 leading-snug">
+                Sutan Sjahrir dan Bung Hatta mengutamakan meja perundingan (diplomasi) dengan tujuan:
+              </h4>
+              <div class="space-y-2 text-xs">
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(2, 'A', true, this)">
+                  A. Memperoleh pengakuan de jure internasional & menghentikan pertumpahan darah
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(2, 'B', false, this)">
+                  B. Menyerahkan seluruh kekuasaan kepada Sekutu
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(2, 'C', false, this)">
+                  C. Mengabaikan keberadaan Tentara Keamanan Rakyat
+                </button>
+              </div>
+            </div>
+            <div id="feedback-2" class="hidden mt-3 p-3 rounded-xl text-xs leading-snug"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="fade-up bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between card-lift" id="quizCard-3">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2 gap-2">
+                <span class="font-bold text-brand-red">SOAL 3 &bull; LITERASI DATA</span>
+                <span class="text-[10px] text-slate-400 shrink-0">Poin: 20</span>
+              </div>
+              <h4 class="font-bold text-sm text-brand-navy mb-3 leading-snug">
+                Bila kamu menemukan pesan viral berantai yang provokatif di grup kelas tanpa sumber terpercaya, sikap ksatria adalah:
+              </h4>
+              <div class="space-y-2 text-xs">
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(3, 'A', false, this)">
+                  A. Segera meneruskan (forward) ke semua kontak agar cepat tahu
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(3, 'B', false, this)">
+                  B. Membalas dengan ujaran kebencian baru
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(3, 'C', true, this)">
+                  C. Tahan diri, uji lewat fitur WASPADA, lalu lampirkan sanggahan fakta resmi secara santun
+                </button>
+              </div>
+            </div>
+            <div id="feedback-3" class="hidden mt-3 p-3 rounded-xl text-xs leading-snug"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="fade-up bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between card-lift" id="quizCard-4">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2 gap-2">
+                <span class="font-bold text-brand-red">SOAL 4 &bull; PROPAGANDA 1948</span>
+                <span class="text-[10px] text-slate-400 shrink-0">Poin: 20</span>
+              </div>
+              <h4 class="font-bold text-sm text-brand-navy mb-3 leading-snug">
+                Pada Agresi Militer Belanda II (Desember 1948), Radio Hilversum menyiarkan propaganda bahwa "Republik Indonesia telah musnah dan pemimpinnya menyerah". Sikap kritis pejuang siber adalah:
+              </h4>
+              <div class="space-y-2 text-xs">
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(4, 'A', false, this)">
+                  A. Mempercayai siaran karena berasal dari kantor radio internasional ternama
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(4, 'B', true, this)">
+                  B. Menolak klaim sepihak & memverifikasi eksistensi PDRI Bukittinggi serta siaran RRI gerilya
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(4, 'C', false, this)">
+                  C. Menyebarkan kepanikan ke grup laskar rakyat agar segera meletakkan senjata
+                </button>
+              </div>
+            </div>
+            <div id="feedback-4" class="hidden mt-3 p-3 rounded-xl text-xs leading-snug"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="fade-up bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between card-lift lg:col-span-2 xl:col-span-1" id="quizCard-5">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-2 gap-2">
+                <span class="font-bold text-brand-red">SOAL 5 &bull; STRATEGI WEHRKREISE</span>
+                <span class="text-[10px] text-slate-400 shrink-0">Poin: 20</span>
+              </div>
+              <h4 class="font-bold text-sm text-brand-navy mb-3 leading-snug">
+                Mengapa strategi <em>Wehrkreise</em> Jenderal Soedirman dianggap mampu mematahkan klaim kemenangan Belanda?
+              </h4>
+              <div class="space-y-2 text-xs">
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(5, 'A', false, this)">
+                  A. Karena TNI berhasil merebut kembali seluruh kota besar dalam satu malam
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(5, 'B', false, this)">
+                  B. Karena Belanda secara sukarela menyerahkan kedaulatan tanpa syarat
+                </button>
+                <button class="option-btn w-full text-left p-2.5 rounded-xl border border-stone-200 hover:border-brand-red hover:bg-stone-50" onclick="checkAnswer(5, 'C', true, this)">
+                  C. Karena pertahanan dipecah menjadi kantong-kantong rakyat yang tersebar, sehingga Republik tetap hidup meski kota-kotanya dikuasai musuh
+                </button>
+              </div>
+            </div>
+            <div id="feedback-5" class="hidden mt-3 p-3 rounded-xl text-xs leading-snug"></div>
+          </div>
+        </div>
+
+        <!-- Result banner -->
+        <div id="quizResultBanner" class="hidden bg-white rounded-2xl p-5 border-2 border-brand-gold/70 shadow-md gap-4 items-center justify-between flex-col sm:flex-row">
+          <div class="flex items-start gap-3">
+            <div id="quizResultIcon" class="w-11 h-11 rounded-xl bg-amber-100 text-brand-goldMuted flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+            </div>
+            <div>
+              <h4 id="quizResultTitle" class="font-serif font-black text-lg text-brand-navy">Kuis Selesai!</h4>
+              <p id="quizResultMessage" class="text-xs text-slate-600 mt-0.5 max-w-xl"></p>
+            </div>
+          </div>
+          <button onclick="resetQuiz()" class="bg-brand-navy hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shrink-0">
+            Ulangi Kuis
+          </button>
+        </div>
+
+        <!-- Ikrar & kesimpulan -->
+        <div class="fade-up bg-white rounded-2xl p-5 sm:p-6 border-2 border-brand-gold/60 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+          <div class="space-y-2">
+            <span class="text-xs font-bold text-brand-goldMuted uppercase tracking-wider flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              Ikrar Pelajar Indonesia Anti-Hoaks
+            </span>
+            <h3 class="font-serif font-black text-xl text-brand-navy">Menjadi Bagian dari Pasukan Sadar Data</h3>
+            <p class="text-xs text-slate-600 max-w-2xl leading-relaxed">
+              "Kami pelajar Indonesia bersumpah: senantiasa meneliti sebelum meyakini, menjaga persatuan di atas perbedaan opini,
+              dan meneruskan nyala juang para pahlawan kemerdekaan 1945–1949 di jagat maya."
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+            <button class="bg-brand-navy hover:bg-slate-800 text-white font-bold text-xs px-5 py-3 rounded-xl transition" onclick="goToSlide(0)">Kembali ke Awal</button>
+            <button class="bg-brand-red hover:bg-brand-redDark text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition" onclick="pledgeAlert()">Kukuhkan Ikrar</button>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="pt-3 border-t border-stone-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-2">
+          <div><span class="font-bold text-brand-navy">WASPADA (Wira Sadar Pandai Data)</span> &bull; Inspirasi Nilai Pejuang 1945–1949</div>
+          <div class="font-medium text-slate-600">Karya Edukasi Kebangsaan <span class="text-brand-red font-bold">by Evan XI-TEI 1</span></div>
+        </footer>
+      </div>
+    </section>
+  </div>
+</main>
+<!-- ============================ BOTTOM CONTROLS ============================ -->
+<div id="deckControls" class="fixed bottom-14 sm:bottom-4 left-1/2 -translate-x-1/2 z-40 bg-white/90 backdrop-blur-md px-3 sm:px-4 py-2.5 rounded-full border border-stone-300 shadow-xl flex items-center gap-3 sm:gap-4 max-w-[calc(100vw-2rem)]">
+  <button id="prevBtn" onclick="prevSlide()" aria-label="Bab sebelumnya" disabled
+          class="w-8 h-8 rounded-full bg-stone-100 hover:bg-brand-red hover:text-white flex items-center justify-center text-slate-700 transition disabled:opacity-40 disabled:hover:bg-stone-100 disabled:hover:text-slate-700 disabled:cursor-not-allowed shrink-0">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+    </svg>
+  </button>
+
+  <div class="flex items-center gap-1.5" id="dotsContainer" role="tablist" aria-label="Indikator bab">
+    <button role="tab" aria-label="Bab 1" aria-selected="true" onclick="goToSlide(0)" class="w-6 h-2.5 rounded-full bg-brand-red transition-all duration-300"></button>
+    <button role="tab" aria-label="Bab 2" aria-selected="false" onclick="goToSlide(1)" class="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300"></button>
+    <button role="tab" aria-label="Bab 3" aria-selected="false" onclick="goToSlide(2)" class="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300"></button>
+    <button role="tab" aria-label="Bab 4" aria-selected="false" onclick="goToSlide(3)" class="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300"></button>
+    <button role="tab" aria-label="Bab 5" aria-selected="false" onclick="goToSlide(4)" class="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300"></button>
+    <button role="tab" aria-label="Bab 6" aria-selected="false" onclick="goToSlide(5)" class="w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300"></button>
+  </div>
+
+  <span id="slideCounter" class="text-xs font-bold text-slate-700 select-none min-w-[42px] text-center">1 / 6</span>
+
+  <button id="nextBtn" onclick="nextSlide()" aria-label="Bab selanjutnya"
+          class="w-8 h-8 rounded-full bg-stone-100 hover:bg-brand-red hover:text-white flex items-center justify-center text-slate-700 transition disabled:opacity-40 disabled:hover:bg-stone-100 disabled:hover:text-slate-700 disabled:cursor-not-allowed shrink-0">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+    </svg>
+  </button>
+</div>
+
+<!-- ============================ WATERMARK ============================ -->
+<div class="watermark fixed bottom-3 right-3 sm:right-4 z-50" aria-hidden="true">
+  <div class="px-2.5 py-1 rounded-md bg-stone-900/55 backdrop-blur-sm border border-white/20 text-white/80 font-mono text-[10px] sm:text-[11px] tracking-tight shadow-md">
+    by Evan XI-TEI 1
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  /* ==========================================================
+     CONFIG & STATE
+     ========================================================== */
+  const TOTAL_SLIDES = 6;
+  const SLIDE_STEP = 100 / TOTAL_SLIDES;      // one slide = 16.6667% of wrapper
+  const DRAG_THRESHOLD_MIN = 60;              // px
+  const DRAG_RESISTANCE = 0.35;               // rubber-band at the ends
+  const FADE_STAGGER = 70;                    // ms between staggered items
+  const FADE_STAGGER_MAX = 460;               // ms cap
+  const QUIZ_TOTAL = 5;
+
+  let currentSlide = 0;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragDeltaX = 0;
+  let dragLocked = false;                     // true once the gesture is clearly horizontal
+  let activePointerId = null;
+
+  const slidesWrapper = document.getElementById("slidesWrapper");
+  const slides = Array.prototype.slice.call(document.querySelectorAll(".slide-page"));
+  const progressBar = document.getElementById("progressBar");
+  const chapterSelector = document.getElementById("chapterSelector");
+  const slideCounter = document.getElementById("slideCounter");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const dotsContainer = document.getElementById("dotsContainer");
+
+  /* ==========================================================
+     HELPERS
+     ========================================================== */
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function measureHeader() {
+    const header = document.querySelector("header");
+    if (!header) return;
+    document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+  }
+
+  /* ==========================================================
+     STAGGERED FADE-UP
+     Assigns an increasing delay to every .fade-up inside a slide,
+     then toggles the .is-active class so the transition replays.
+     ========================================================== */
+  function prepareFadeUp(slide) {
+    const items = slide.querySelectorAll(".fade-up");
+    items.forEach(function (el, index) {
+      el.style.setProperty("--fade-delay", Math.min(index * FADE_STAGGER, FADE_STAGGER_MAX) + "ms");
+    });
+  }
+
+  function setActiveSlide(index) {
+    slides.forEach(function (slide, i) {
+      const isCurrent = i === index;
+      slide.classList.toggle("is-active", isCurrent);
+      if (isCurrent) {
+        slide.removeAttribute("aria-hidden");
+      } else {
+        slide.setAttribute("aria-hidden", "true");
+      }
+    });
+  }
+
+  /* ==========================================================
+     SLIDE NAVIGATION
+     ========================================================== */
+  function updateSlider() {
+    slidesWrapper.style.transform = "translateX(-" + currentSlide * SLIDE_STEP + "%)";
+
+    if (progressBar) {
+      progressBar.style.width = ((currentSlide + 1) / TOTAL_SLIDES) * 100 + "%";
+    }
+    if (chapterSelector) {
+      chapterSelector.value = String(currentSlide);
+    }
+    if (slideCounter) {
+      slideCounter.textContent = (currentSlide + 1) + " / " + TOTAL_SLIDES;
+    }
+    if (prevBtn) prevBtn.disabled = currentSlide === 0;
+    if (nextBtn) nextBtn.disabled = currentSlide === TOTAL_SLIDES - 1;
+
+    if (dotsContainer) {
+      Array.prototype.forEach.call(dotsContainer.children, function (dot, idx) {
+        const active = idx === currentSlide;
+        dot.className = active
+          ? "w-6 h-2.5 rounded-full bg-brand-red transition-all duration-300"
+          : "w-2.5 h-2.5 rounded-full bg-stone-300 hover:bg-stone-400 transition-all duration-300";
+        dot.setAttribute("aria-selected", active ? "true" : "false");
+      });
+    }
+
+    setActiveSlide(currentSlide);
+  }
+
+  function goToSlide(index) {
+    const target = Math.max(0, Math.min(TOTAL_SLIDES - 1, Number(index) || 0));
+    if (target === currentSlide) return;
+    currentSlide = target;
+    updateSlider();
+    slides[currentSlide].scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (currentSlide < TOTAL_SLIDES - 1) {
+      currentSlide += 1;
+      updateSlider();
+      slides[currentSlide].scrollTop = 0;
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide -= 1;
+      updateSlider();
+      slides[currentSlide].scrollTop = 0;
+    }
+  }
+
+  /* ==========================================================
+     KEYBOARD
+     ========================================================== */
+  function isTypingTarget(el) {
+    if (!el) return false;
+    const tag = el.tagName;
+    return tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT" || el.isContentEditable;
+  }
+
+  window.addEventListener("keydown", function (event) {
+    if (isTypingTarget(document.activeElement)) return;
+    if (event.key === "ArrowRight" || event.key === "PageDown") {
+      event.preventDefault();
+      nextSlide();
+    } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
+      event.preventDefault();
+      prevSlide();
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      goToSlide(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      goToSlide(TOTAL_SLIDES - 1);
+    }
+  });
+
+  /* ==========================================================
+     POINTER DRAG (mouse + pen + touch)
+     touch-action: pan-y on the wrapper keeps vertical scrolling
+     working while we own the horizontal axis.
+     ========================================================== */
+  function isInteractive(el) {
+    if (!el || !el.closest) return false;
+    return !!el.closest('a, button, input, select, textarea, label, [role="button"], [data-no-drag]');
+  }
+
+  function onPointerDown(event) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (isInteractive(event.target)) return;
+    if (event.target.closest("figure") && event.pointerType !== "mouse") {
+      // allow image captions to be dragged too, but never hijack scroll on text selection
+    }
+    isDragging = true;
+    dragLocked = false;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+    dragDeltaX = 0;
+    activePointerId = event.pointerId;
+    slidesWrapper.classList.add("is-dragging");
+  }
+
+  function onPointerMove(event) {
+    if (!isDragging || event.pointerId !== activePointerId) return;
+
+    const dx = event.clientX - dragStartX;
+    const dy = event.clientY - dragStartY;
+
+    if (!dragLocked) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      // vertical intent wins -> give the gesture back to the browser
+      if (Math.abs(dy) > Math.abs(dx)) {
+        endDrag(false);
+        return;
+      }
+      dragLocked = true;
+      document.body.classList.add("is-dragging");
+    }
+
+    dragDeltaX = dx;
+
+    const atStart = currentSlide === 0 && dx > 0;
+    const atEnd = currentSlide === TOTAL_SLIDES - 1 && dx < 0;
+    const applied = (atStart || atEnd) ? dx * DRAG_RESISTANCE : dx;
+
+    slidesWrapper.style.transform =
+      "translateX(calc(-" + currentSlide * SLIDE_STEP + "% + " + applied + "px))";
+  }
+
+  function onPointerUp(event) {
+    if (!isDragging || (activePointerId !== null && event.pointerId !== activePointerId)) return;
+    endDrag(true);
+  }
+
+  function endDrag(commit) {
+    if (!isDragging) return;
+    isDragging = false;
+    activePointerId = null;
+    slidesWrapper.classList.remove("is-dragging");
+    document.body.classList.remove("is-dragging");
+
+    const threshold = Math.max(DRAG_THRESHOLD_MIN, window.innerWidth * 0.14);
+
+    if (commit && dragLocked) {
+      if (dragDeltaX <= -threshold && currentSlide < TOTAL_SLIDES - 1) {
+        currentSlide += 1;
+        slides[currentSlide].scrollTop = 0;
+      } else if (dragDeltaX >= threshold && currentSlide > 0) {
+        currentSlide -= 1;
+        slides[currentSlide].scrollTop = 0;
+      }
+    }
+
+    dragDeltaX = 0;
+    dragLocked = false;
+    updateSlider(); // always restores the exact transition position
+  }
+
+  slidesWrapper.addEventListener("pointerdown", onPointerDown);
+  window.addEventListener("pointermove", onPointerMove, { passive: true });
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerUp);
+
+  // Prevent native image dragging inside the deck
+  document.addEventListener("dragstart", function (event) {
+    if (event.target && event.target.tagName === "IMG") event.preventDefault();
+  });
+
+  /* ==========================================================
+     RESIZE
+     ========================================================== */
+  let resizeTimer = null;
+  window.addEventListener("resize", function () {
+    measureHeader();
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(updateSlider, 120);
+  });
+/* ==========================================================
+     BAB 4 — LIVE FACT-CHECK SIMULATOR
+     ========================================================== */
+  const liveTextInput = document.getElementById("liveTextInput");
+  const charCount = document.getElementById("charCount");
+
+  const SAMPLE_PRESETS = {
+    "5g": "PERINGATAN DARURAT: Vaksin mengandung microchip 5G dan medan magnetik untuk mengontrol pikiran rakyat! Segera sebarkan sebelum dihapus oleh konspirasi elit global!",
+    "linggarjati": "Perundingan Linggarjati ditandatangani pada 25 Maret 1947 di Cirebon. Dalam kesepakatan diplomatik ini, Belanda secara de facto mengakui wilayah Republik Indonesia meliputi Jawa, Madura, dan Sumatra sesuai arsip resmi kemerdekaan.",
+    "bansos": "BOCORAN RESMI KEMENSOS: Dana bantuan tunai Rp 15.000.000 untuk seluruh pelajar SMA langsung cair hari ini! Klik link bit.ly/bansos-pelajar-gratis2025 dan masukkan nomor rekening Anda!",
+    "agresi": "Pada 21 Juli 1947, pihak Belanda melancarkan Agresi Militer Belanda I (Operatie Product). Serangan ini melanggar hasil Perjanjian Linggarjati dan memicu perlawanan gerilya rakyat serta perhatian Dewan Keamanan PBB.",
+    "gempa": "BREAKING NEWS HARI INI: Gedung bertingkat runtuh akibat gempa dahsyat yang melanda ibukota beberapa menit lalu! Terlihat kepanikan luar biasa warga di jalan raya! (Disertai rekaman video bencana tahun 2018 tanpa sumber rujukan resmi)."
+  };
+
+  const HOAX_KEYWORDS = ["chip", "5g", "magnet", "konspirasi", "elit global", "sebar", "viralkan",
+    "sebelum dihapus", "gratis", "bit.ly", "cairkan", "bansos", "hadiah",
+    "rahasia", "bocoran", "bahaya vaksin", "darurat", "rekening", "klaim rahasia", "klik link"];
+
+  const VALID_KEYWORDS = ["linggarjati", "renville", "kmb", "de facto", "de jure", "1947", "1948", "1949",
+    "anri", "arsip", "resmi", "pbb", "agresi militer", "roem-roijen", "kemendikbud",
+    "kominfo", "sutan sjahrir", "soedirman", "sejarah ri", "konferensi meja bundar"];
+
+  const MISLEADING_KEYWORDS = ["video gempa", "rekaman lama", "hari ini", "viral", "terlihat kepanikan",
+    "breaking news", "gempa dahsyat", "tanpa sumber", "beberapa menit lalu", "dipotong"];
+
+  function countHits(text, keywords) {
+    let hits = 0;
+    keywords.forEach(function (keyword) {
+      if (text.indexOf(keyword) !== -1) hits += 1;
+    });
+    return hits;
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function setClass(id, className) {
+    const el = document.getElementById(id);
+    if (el) el.className = className;
+  }
+
+  function clearLiveInput() {
+    if (!liveTextInput) return;
+    liveTextInput.value = "";
+    if (charCount) charCount.textContent = "0 karakter";
+    liveTextInput.focus();
+  }
+
+  function loadPreset(key) {
+    if (!liveTextInput || !SAMPLE_PRESETS[key]) return;
+    liveTextInput.value = SAMPLE_PRESETS[key];
+    if (charCount) charCount.textContent = SAMPLE_PRESETS[key].length + " karakter";
+    triggerLiveAnalysis();
+  }
+
+  function triggerLiveAnalysis() {
+    if (!liveTextInput) return;
+    const text = liveTextInput.value.trim();
+    if (!text) {
+      liveTextInput.focus();
+      setText("liveResultHeadline", "Belum ada teks untuk dianalisis");
+      setText("liveResultReason", "Ketik atau tempel narasi terlebih dahulu, atau pilih salah satu tombol preset di atas untuk mencoba contoh nyata.");
+      return;
+    }
+
+    const overlay = document.getElementById("liveLoadingOverlay");
+    const btnText = document.getElementById("analyzeBtnText");
+
+    if (overlay) {
+      overlay.classList.remove("hidden");
+      overlay.classList.add("flex");
+    }
+    if (btnText) btnText.textContent = "Menganalisis Teks...";
+
+    window.setTimeout(function () {
+      analyzeTextContent(text);
+      if (overlay) {
+        overlay.classList.add("hidden");
+        overlay.classList.remove("flex");
+      }
+      if (btnText) btnText.textContent = "Periksa Teks Sekarang";
+    }, 550);
+  }
+
+  function analyzeTextContent(text) {
+    const lower = text.toLowerCase();
+    const hoaxHits = countHits(lower, HOAX_KEYWORDS);
+    const validHits = countHits(lower, VALID_KEYWORDS);
+    const misleadingHits = countHits(lower, MISLEADING_KEYWORDS);
+
+    const now = new Date();
+    const stamp = "Dicek: " +
+      String(now.getHours()).padStart(2, "0") + ":" +
+      String(now.getMinutes()).padStart(2, "0") + " WIB";
+    setText("liveAnalysisTime", stamp);
+
+    if (validHits > hoaxHits && validHits > misleadingHits) {
+      setClass("liveStatusBadge", "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5");
+      const badge = document.getElementById("liveStatusBadge");
+      if (badge) badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-600"></span> <span>FAKTA VALID / OTENTIK</span>';
+
+      const headline = document.getElementById("liveResultHeadline");
+      if (headline) {
+        headline.textContent = "Data Sesuai Catatan Historiografi & Arsip Kemerdekaan";
+        headline.className = "font-serif font-black text-sm text-emerald-900";
+      }
+      setText("liveResultReason", "Narasi memuat terminologi presisi sejarah (seperti perundingan diplomasi atau kronik 1945–1949), tidak memakai nada histeris, serta selaras dengan pangkalan data Arsip Nasional Republik Indonesia (ANRI).");
+
+      setText("liveMeterLabel", "Tingkat Validitas & Otentisitas Fakta");
+      setClass("liveMeterValue", "text-emerald-700 font-black text-xs");
+      setText("liveMeterValue", "96% Terverifikasi Aman");
+      setClass("liveMeterBar", "bg-emerald-500 h-full rounded-full transition-all duration-700");
+      const bar = document.getElementById("liveMeterBar");
+      if (bar) bar.style.width = "96%";
+
+      setClass("paramClickbait", "font-bold text-emerald-700 text-right");
+      setText("paramClickbait", "Rendah (Objektif Edukatif)");
+      setClass("paramSource", "font-bold text-emerald-700 text-right");
+      setText("paramSource", "Terindikasi Valid & Konsisten");
+      setClass("paramHistory", "font-bold text-emerald-700 text-right");
+      setText("paramHistory", "Selaras dengan Kronik ANRI / PBB");
+
+      setClass("liveAdviceBox", "p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-[10px] space-y-1");
+      const advice = document.getElementById("liveAdviceText");
+      if (advice) advice.innerHTML = "<strong>Sikap ksatria:</strong> informasi ini layak dijadikan bahan referensi belajar sejarah di kelas dan disebarkan untuk memperkuat pemahaman kebangsaan.";
+
+    } else if (misleadingHits >= 1 || (hoaxHits === 0 && validHits === 0 && lower.indexOf("breaking") !== -1)) {
+      setClass("liveStatusBadge", "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1.5");
+      const badge = document.getElementById("liveStatusBadge");
+      if (badge) badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span> <span>KONTEN MENYESATKAN (OUT OF CONTEXT)</span>';
+
+      const headline = document.getElementById("liveResultHeadline");
+      if (headline) {
+        headline.textContent = "Manipulasi Konteks Waktu atau Lokasi Terdeteksi";
+        headline.className = "font-serif font-black text-sm text-amber-900";
+      }
+      setText("liveResultReason", "Materi kemungkinan memakai visual atau pernyataan lama yang didaur ulang dengan label 'hari ini' untuk mengecoh audiens demi engagement media sosial.");
+
+      setText("liveMeterLabel", "Tingkat Risiko Distorsi Konteks");
+      setClass("liveMeterValue", "text-amber-700 font-black text-xs");
+      setText("liveMeterValue", "74% Menyesatkan");
+      setClass("liveMeterBar", "bg-amber-500 h-full rounded-full transition-all duration-700");
+      const bar = document.getElementById("liveMeterBar");
+      if (bar) bar.style.width = "74%";
+
+      setClass("paramClickbait", "font-bold text-amber-700 text-right");
+      setText("paramClickbait", "Sedang–Tinggi (Klaim Terburu-buru)");
+      setClass("paramSource", "font-bold text-amber-700 text-right");
+      setText("paramSource", "Nir-Tanggal / Daur Ulang Dokumentasi");
+      setClass("paramHistory", "font-bold text-amber-700 text-right");
+      setText("paramHistory", "Butuh Klarifikasi Sumber Primer");
+
+      setClass("liveAdviceBox", "p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-[10px] space-y-1");
+      const advice = document.getElementById("liveAdviceText");
+      if (advice) advice.innerHTML = "<strong>Sikap ksatria:</strong> jangan langsung percaya video atau foto bencana tanpa memeriksa stempel tanggal asli lewat pencarian gambar terbalik, BMKG, atau kanal resmi.";
+
+    } else {
+      setClass("liveStatusBadge", "text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-red-100 text-brand-red border border-red-300 flex items-center gap-1.5");
+      const badge = document.getElementById("liveStatusBadge");
+      if (badge) badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span> <span>HOAKS & PROPAGANDA TERDETEKSI</span>';
+
+      const headline = document.getElementById("liveResultHeadline");
+      if (headline) {
+        headline.textContent = "Teks Mengandung Ciri Rekayasa Disinformasi & Phishing";
+        headline.className = "font-serif font-black text-sm text-brand-navy";
+      }
+      setText("liveResultReason", "Ditemukan pola desakan psikologis ('sebarkan sebelum dihapus'), iming-iming dana instan, atau teori pseudosains yang tidak memiliki landasan ilmiah maupun faktual.");
+
+      setText("liveMeterLabel", "Tingkat Risiko Manipulasi & Bahaya");
+      setClass("liveMeterValue", "text-brand-red font-black text-xs");
+      setText("liveMeterValue", "93% Berbahaya (Hoaks)");
+      setClass("liveMeterBar", "bg-brand-red h-full rounded-full transition-all duration-700");
+      const bar = document.getElementById("liveMeterBar");
+      if (bar) bar.style.width = "93%";
+
+      setClass("paramClickbait", "font-bold text-red-600 text-right");
+      setText("paramClickbait", "Sangat Tinggi (Provokasi Histeria)");
+      setClass("paramSource", "font-bold text-red-600 text-right");
+      setText("paramSource", "Domain Abal-abal / Phishing");
+      setClass("paramHistory", "font-bold text-red-600 text-right");
+      setText("paramHistory", "Kontradiktif dengan Fakta Sains & Negara");
+
+      setClass("liveAdviceBox", "p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-950 text-[10px] space-y-1");
+      const advice = document.getElementById("liveAdviceText");
+      if (advice) advice.innerHTML = "<strong>Stop di kamu!</strong> jangan klik tautan mencurigakan demi menjaga keamanan data pribadi, dan laporkan ke kanal TurnBackHoax.id atau aduankonten.id.";
+    }
+  }
+
+  /* ==========================================================
+     BAB 4 — SIMULATOR RESULT SWITCHER
+     ========================================================== */
+  const SIM_STATES = {
+    valid: {
+      tag: "text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300",
+      tagText: "STATUS: VALID & OTENTIK",
+      title: '"Dekrit Pembentukan PDRI di Sumatra oleh Sjafruddin Prawiranegara (1948)"',
+      desc: "Hasil Analisis WASPADA: terkonfirmasi <strong>100% valid</strong> berdasarkan arsip kawat resmi Arsip Nasional RI (ANRI) dan catatan Dewan Keamanan PBB.",
+      scoreLabel: "Tingkat Kepercayaan Otentisitas",
+      scoreValue: "99.2% Terverifikasi",
+      scoreClass: "text-emerald-700 font-black",
+      barClass: "bg-emerald-500 h-full rounded-full transition-all duration-500",
+      barWidth: "99%",
+      border: "#10B981",
+      advice: "Rekomendasi: jadikan bahan belajar dan sebarkan untuk memperkuat literasi sejarah."
+    },
+    misleading: {
+      tag: "text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300",
+      tagText: "STATUS: MENYESATKAN (OUT OF CONTEXT)",
+      title: '"Kutipan Perjanjian Linggarjati Dipotong untuk Menuduh Para Pendiri Bangsa Menyerah"',
+      desc: "Hasil Analisis WASPADA: <strong>menyesatkan</strong>. Teks kutipan benar, namun konteks taktik diplomasi Sutan Sjahrir sengaja dihilangkan untuk memicu kebencian politik.",
+      scoreLabel: "Tingkat Manipulasi Konteks",
+      scoreValue: "68% Distorsi",
+      scoreClass: "text-amber-700 font-black",
+      barClass: "bg-amber-500 h-full rounded-full transition-all duration-500",
+      barWidth: "68%",
+      border: "#F59E0B",
+      advice: "Rekomendasi: lengkapi kutipan dengan konteks aslinya sebelum ikut membagikan."
+    },
+    hoax: {
+      tag: "text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-red-100 text-brand-red border border-red-300",
+      tagText: "STATUS: HOAKS / FABRIKASI",
+      title: '"Klaim: NICA Menyatakan RI Sudah Menyerah Total pada 19 Desember 1948"',
+      desc: "Hasil Analisis WASPADA: narasi ini adalah <strong>disinformasi sejarah</strong>. Faktanya, Presiden Soekarno telah memberikan mandat telegram pembentukan Pemerintah Darurat RI (PDRI) kepada Sjafruddin Prawiranegara di Bukittinggi.",
+      scoreLabel: "Tingkat Kebohongan Konten",
+      scoreValue: "94% Palsu",
+      scoreClass: "text-brand-red font-black",
+      barClass: "bg-brand-red h-full rounded-full transition-all duration-500",
+      barWidth: "94%",
+      border: "#B91C1C",
+      advice: "Rekomendasi: jangan sebarkan ke grup sekolah."
+    }
+  };
+
+  let currentSimState = "hoax";
+
+  function setSimResult(type) {
+    const state = SIM_STATES[type];
+    if (!state) return;
+    currentSimState = type;
+
+    setClass("simTag", state.tag);
+    setText("simTag", state.tagText);
+
+    const titleEl = document.getElementById("simTitle");
+    if (titleEl) titleEl.textContent = state.title;
+
+    const descEl = document.getElementById("simDesc");
+    if (descEl) descEl.innerHTML = state.desc;
+
+    setText("simScoreLabel", state.scoreLabel);
+    setClass("simScoreValue", state.scoreClass);
+    setText("simScoreValue", state.scoreValue);
+
+    setClass("simBar", state.barClass);
+    const bar = document.getElementById("simBar");
+    if (bar) bar.style.width = state.barWidth;
+
+    const box = document.getElementById("simCardBox");
+    if (box) box.style.borderColor = state.border;
+
+    setText("simAdvice", state.advice);
+
+    const buttons = { valid: "btnSimValid", misleading: "btnSimMisleading", hoax: "btnSimHoax" };
+    Object.keys(buttons).forEach(function (key) {
+      const el = document.getElementById(buttons[key]);
+      if (!el) return;
+      const isActive = key === type;
+      el.className = isActive
+        ? "px-3 py-1.5 rounded-xl font-bold text-xs border transition " + (
+            key === "valid" ? "border-emerald-500 bg-emerald-500 text-white shadow-md"
+            : key === "misleading" ? "border-amber-500 bg-amber-500 text-white shadow-md"
+            : "border-red-500 bg-red-600 text-white shadow-md")
+        : "px-3 py-1.5 rounded-xl font-bold text-xs border transition " + (
+            key === "valid" ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-white"
+            : key === "misleading" ? "border-amber-500 bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-white"
+            : "border-red-500 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white");
+    });
+  }
+
+  /* Download the current simulation result as a small SVG "fact card" */
+  function downloadFactCard() {
+    const state = SIM_STATES[currentSimState];
+    if (!state) return;
+
+    const amp = String.fromCharCode(38) + "amp;";
+    const lt = String.fromCharCode(38) + "lt;";
+    const gt = String.fromCharCode(38) + "gt;";
+    const quot = String.fromCharCode(38) + "quot;";
+
+    const escapeXml = function (value) {
+      return String(value)
+        .replace(/&/g, amp)
+        .replace(/</g, lt)
+        .replace(/>/g, gt)
+        .replace(/"/g, quot);
+    };
+    const stripTags = function (value) {
+      return escapeXml(String(value).replace(/<[^>]*>/g, ""));
+    };
+
+    const lines = [];
+    lines.push('<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">');
+    lines.push('<rect width="720" height="420" fill="#FAF7F2"/>');
+    lines.push('<rect x="0" y="0" width="720" height="10" fill="#B91C1C"/>');
+    lines.push('<rect x="0" y="10" width="720" height="4" fill="#D4A017"/>');
+    lines.push('<text x="40" y="70" font-family="Georgia, serif" font-size="30" font-weight="bold" fill="#0F172A">KARTU FAKTA WASPADA</text>');
+    lines.push('<text x="40" y="98" font-family="Arial, sans-serif" font-size="14" fill="#64748B">Wira Sadar Pandai Data &#8226; ID #WSP-1949-88</text>');
+    lines.push('<rect x="40" y="120" width="640" height="1" fill="#E2E8F0"/>');
+    lines.push('<text x="40" y="156" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#B91C1C">' + stripTags(state.tagText) + '</text>');
+    lines.push('<text x="40" y="196" font-family="Georgia, serif" font-size="20" font-weight="bold" fill="#0F172A">' + stripTags(state.title) + '</text>');
+    lines.push('<text x="40" y="238" font-family="Arial, sans-serif" font-size="14" fill="#334155">' + stripTags(state.desc) + '</text>');
+    lines.push('<text x="40" y="292" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#0F172A">' + stripTags(state.scoreLabel) + ': ' + stripTags(state.scoreValue) + '</text>');
+    lines.push('<rect x="40" y="308" width="640" height="12" rx="6" fill="#E2E8F0"/>');
+    lines.push('<rect x="40" y="308" width="' + Math.round(640 * (parseInt(state.barWidth, 10) / 100)) + '" height="12" rx="6" fill="' + state.border + '"/>');
+    lines.push('<text x="40" y="356" font-family="Arial, sans-serif" font-size="13" fill="#475569">' + stripTags(state.advice) + '</text>');
+    lines.push('<text x="40" y="392" font-family="Georgia, serif" font-size="15" font-weight="bold" fill="#0F172A">WASPADA - Wira Sadar Pandai Data</text>');
+    lines.push('<text x="680" y="392" text-anchor="end" font-family="monospace" font-size="12" fill="#94A3B8">by Evan XI-TEI 1</text>');
+    lines.push('</svg>');
+
+    const blob = new Blob([lines.join("")], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "kartu-fakta-waspada-" + currentSimState + ".svg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+/* ==========================================================
+     BAB 6 — QUIZ (5 soal, umpan balik langsung, skor, reset)
+     ========================================================== */
+  const answered = {};
+  let quizScore = 0;
+
+  const QUIZ_MESSAGES = [
+    { min: 5, title: "Sempurna! Duta WASPADA Sejati", message: "Luar biasa — kamu memahami sejarah perjuangan sekaligus cakap membaca data. Sebarkan semangat ini ke kelasmu." },
+    { min: 4, title: "Hampir Sempurna, Wira Muda", message: "Pemahamanmu kuat. Tinjau kembali satu soal yang keliru untuk menyempurnakan nalar kritis ksatria data." },
+    { min: 3, title: "Cukup Baik, Perlu Ketajaman", message: "Bekal sejarahmu sudah ada. Latih kebiasaan memeriksa sumber primer agar analisismu makin tajam." },
+    { min: 2, title: "Ayo Ulangi Materi Bab 2 dan 3", message: "Pelajari kembali strategi diplomasi, gerilya Wehrkreise, dan cara memverifikasi kabar berantai." },
+    { min: 0, title: "Jangan Menyerah, Pejuang!", message: "Baca ulang keenam bab lalu coba lagi. Setiap pejuang hebat memulai dengan belajar." }
+  ];
+
+  function findCorrectButton(card) {
+    const buttons = card.querySelectorAll(".option-btn");
+    for (let i = 0; i < buttons.length; i++) {
+      const handler = buttons[i].getAttribute("onclick") || "";
+      if (/,\s*true\s*,/.test(handler)) return buttons[i];
+    }
+    return null;
+  }
+
+  function renderQuizScore() {
+    const answeredCount = Object.keys(answered).length;
+    const scoreEl = document.getElementById("quizScoreText");
+    const progressEl = document.getElementById("quizProgressText");
+    if (scoreEl) scoreEl.textContent = quizScore + " / " + QUIZ_TOTAL + " Benar";
+    if (progressEl) progressEl.textContent = answeredCount + " dari " + QUIZ_TOTAL + " soal dijawab";
+    if (answeredCount === QUIZ_TOTAL) showQuizResult();
+  }
+
+  function showQuizResult() {
+    const banner = document.getElementById("quizResultBanner");
+    if (!banner) return;
+
+    let picked = QUIZ_MESSAGES[QUIZ_MESSAGES.length - 1];
+    for (let i = 0; i < QUIZ_MESSAGES.length; i++) {
+      if (quizScore >= QUIZ_MESSAGES[i].min) { picked = QUIZ_MESSAGES[i]; break; }
+    }
+
+    setText("quizResultTitle", picked.title + " — Skor " + quizScore + " / " + QUIZ_TOTAL);
+    setText("quizResultMessage", picked.message);
+
+    const scoreBadge = document.getElementById("quizScoreText");
+    if (scoreBadge) {
+      scoreBadge.className = "font-serif font-black text-xl " + (quizScore >= 4 ? "text-emerald-700" : quizScore >= 3 ? "text-brand-goldMuted" : "text-brand-red");
+    }
+
+    banner.classList.remove("hidden");
+    banner.classList.add("flex");
+  }
+
+  function checkAnswer(questionNumber, optionKey, isCorrect, buttonEl) {
+    if (answered[questionNumber]) return;
+    answered[questionNumber] = true;
+
+    const card = document.getElementById("quizCard-" + questionNumber);
+    const feedback = document.getElementById("feedback-" + questionNumber);
+    if (!card || !buttonEl) return;
+
+    card.querySelectorAll(".option-btn").forEach(function (btn) {
+      btn.disabled = true;
+    });
+
+    if (isCorrect) {
+      buttonEl.classList.add("correct");
+      quizScore += 1;
+      if (feedback) {
+        feedback.className = "mt-3 p-3 rounded-xl text-xs leading-snug bg-emerald-100 text-emerald-900 border border-emerald-300";
+        feedback.innerHTML = "<strong>Benar sekali!</strong> Analisis Anda tepat dan sesuai data sejarah objektif.";
+        feedback.classList.remove("hidden");
+      }
+    } else {
+      buttonEl.classList.add("wrong");
+      const correctBtn = findCorrectButton(card);
+      if (correctBtn) correctBtn.classList.add("correct");
+      if (feedback) {
+        feedback.className = "mt-3 p-3 rounded-xl text-xs leading-snug bg-red-100 text-red-900 border border-red-300";
+        feedback.innerHTML = "<strong>Belum tepat.</strong> Jawaban benar sudah ditandai hijau. Tinjau kembali bab terkait pada linimasa sejarah dan literasi data.";
+        feedback.classList.remove("hidden");
+      }
+    }
+
+    renderQuizScore();
+  }
+
+  function resetQuiz() {
+    Object.keys(answered).forEach(function (key) { delete answered[key]; });
+    quizScore = 0;
+
+    for (let q = 1; q <= QUIZ_TOTAL; q++) {
+      const card = document.getElementById("quizCard-" + q);
+      if (card) {
+        card.querySelectorAll(".option-btn").forEach(function (btn) {
+          btn.disabled = false;
+          btn.classList.remove("correct", "wrong");
+        });
+      }
+      const feedback = document.getElementById("feedback-" + q);
+      if (feedback) {
+        feedback.className = "hidden mt-3 p-3 rounded-xl text-xs leading-snug";
+        feedback.innerHTML = "";
+      }
+    }
+
+    const banner = document.getElementById("quizResultBanner");
+    if (banner) {
+      banner.classList.add("hidden");
+      banner.classList.remove("flex");
+    }
+
+    const scoreEl = document.getElementById("quizScoreText");
+    if (scoreEl) scoreEl.className = "font-serif font-black text-xl text-brand-red";
+
+    renderQuizScore();
+
+    const firstCard = document.getElementById("quizCard-1");
+    if (firstCard && firstCard.scrollIntoView) {
+      firstCard.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "center" });
+    }
+  }
+
+  function pledgeAlert() {
+    window.alert("Selamat! Anda telah mengukuhkan komitmen sebagai Wira Muda Sadar Data WASPADA.\n\nSenantiasa meneliti sebelum meyakini, menjaga persatuan di atas perbedaan opini, dan meneruskan nyala juang para pahlawan kemerdekaan 1945-1949 di jagat maya.");
+  }
+
+  /* ==========================================================
+     INIT
+     ========================================================== */
+  function init() {
+    measureHeader();
+    slides.forEach(prepareFadeUp);
+
+    slides.forEach(function (slide, i) {
+      slide.setAttribute("aria-hidden", i === 0 ? "false" : "true");
+    });
+
+    window.requestAnimationFrame(function () {
+      window.requestAnimationFrame(updateSlider);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  /* Expose handlers used by inline HTML attributes */
+  window.goToSlide = goToSlide;
+  window.nextSlide = nextSlide;
+  window.prevSlide = prevSlide;
+  window.clearLiveInput = clearLiveInput;
+  window.loadPreset = loadPreset;
+  window.triggerLiveAnalysis = triggerLiveAnalysis;
+  window.setSimResult = setSimResult;
+  window.downloadFactCard = downloadFactCard;
+  window.checkAnswer = checkAnswer;
+  window.resetQuiz = resetQuiz;
+  window.pledgeAlert = pledgeAlert;
+
+})();
+</script>
+</body>
+</html>
